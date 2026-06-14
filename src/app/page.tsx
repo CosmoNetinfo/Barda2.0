@@ -39,7 +39,7 @@ export default async function Home() {
 
         {error && (
           <div className="mb-4 rounded-md bg-red-50 p-4 text-red-600">
-            Errore nel caricamento dei gruppi.
+            Errore nel caricamento dei gruppi: {error.message}
           </div>
         )}
 
