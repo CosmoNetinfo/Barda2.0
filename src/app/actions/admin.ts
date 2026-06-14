@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function checkAdmin(supabase: any) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
@@ -35,7 +36,7 @@ export async function removeMember(userId: string) {
   const supabase = createClient()
   await checkAdmin(supabase)
 
-  const { error } = await supabase.auth.admin.deleteUser(userId)
+  await supabase.auth.admin.deleteUser(userId)
   // Fallback: if we don't have service role for auth.admin.deleteUser, 
   // we just delete from profiles (which might fail if there's foreign keys without cascade, but user requested remove member).
   // Actually, deleting from profiles with ON DELETE CASCADE might be enough if configured, but auth.users is the source of truth.

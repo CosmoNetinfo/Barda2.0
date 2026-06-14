@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { Shield, Trash2, Edit3, Pin } from 'lucide-react'
+import { Shield } from 'lucide-react'
 import AdminActions from './components/AdminActions'
 
 export default async function AdminPage() {

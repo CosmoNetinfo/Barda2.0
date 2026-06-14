@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { updateProfile } from '@/app/actions/profile'
 import { Loader2, Camera, User, FileText } from 'lucide-react'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function ProfileForm({ profile }: { profile: any }) {
   const [isPending, startTransition] = useTransition()
   const [name, setName] = useState(profile?.name || '')
@@ -22,8 +23,9 @@ export default function ProfileForm({ profile }: { profile: any }) {
         await updateProfile(name, bio, avatarUrl)
         setSuccessMsg('Profilo aggiornato con successo!')
         setTimeout(() => setSuccessMsg(''), 3000)
-      } catch (err: any) {
-        setErrorMsg(err.message || 'Errore durante l\'aggiornamento')
+      } catch (err: unknown) {
+        if (err instanceof Error) setErrorMsg(err.message || 'Errore durante l\'aggiornamento')
+        else setErrorMsg('Errore durante l\'aggiornamento')
       }
     })
   }

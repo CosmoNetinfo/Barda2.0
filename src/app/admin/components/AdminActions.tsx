@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { removeMember, updateIdeaStatus, deleteIdea, deleteTask, deleteEvent, toggleEventPin } from '@/app/actions/admin'
-import { Trash2, Pin, Shield } from 'lucide-react'
+import { Trash2, Pin } from 'lucide-react'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function AdminActions({ members, ideas, tasks, events, logs }: any) {
   const [activeTab, setActiveTab] = useState('members')
 
@@ -12,8 +13,8 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
     try {
       await actionFn()
       alert('Operazione completata')
-    } catch (e: any) {
-      alert(e.message)
+    } catch (e: unknown) {
+      if (e instanceof Error) alert(e.message)
     }
   }
 
@@ -42,7 +43,7 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
               </tr>
             </thead>
             <tbody>
-              {members.map((m: any) => (
+              {members.map((m: { id: string; name: string; role?: string }) => (
                 <tr key={m.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                   <td className="p-3 font-bold">{m.name}</td>
                   <td className="p-3 text-sm">{m.role || 'Ospite'}</td>
@@ -67,7 +68,7 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
               </tr>
             </thead>
             <tbody>
-              {ideas.map((i: any) => (
+              {ideas.map((i: { id: string; title: string; status: string }) => (
                 <tr key={i.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                   <td className="p-3 font-bold">{i.title}</td>
                   <td className="p-3">
@@ -102,7 +103,7 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
               </tr>
             </thead>
             <tbody>
-              {tasks.map((t: any) => (
+              {tasks.map((t: { id: string; title: string; status: string }) => (
                 <tr key={t.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                   <td className="p-3 font-bold">{t.title}</td>
                   <td className="p-3 text-sm">{t.status}</td>
@@ -127,7 +128,7 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
               </tr>
             </thead>
             <tbody>
-              {events.map((e: any) => (
+              {events.map((e: { id: string; title: string; date: string; is_pinned: boolean }) => (
                 <tr key={e.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                   <td className="p-3 font-bold">{e.title}</td>
                   <td className="p-3 text-sm">{new Date(e.date).toLocaleDateString()}</td>
@@ -155,7 +156,7 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
               </tr>
             </thead>
             <tbody>
-              {logs.map((l: any) => (
+              {logs.map((l: { id: string; created_at: string; action: string; profiles?: { name: string } }) => (
                 <tr key={l.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                   <td className="p-3 text-xs text-gray-400 whitespace-nowrap">{new Date(l.created_at).toLocaleString()}</td>
                   <td className="p-3 font-bold text-sm">{l.profiles?.name || 'Utente'}</td>
