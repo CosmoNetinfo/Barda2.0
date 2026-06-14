@@ -41,3 +41,29 @@ export async function signup(formData: FormData) {
   revalidatePath('/', 'layout')
   redirect('/')
 }
+
+export async function signInWithGoogle() {
+  const supabase = createClient()
+  
+  // NOTE: next/headers needs to know the domain, but in Server Actions 
+  // you typically construct the callback URL. For local dev:
+  const callbackUrl = process.env.NEXT_PUBLIC_SITE_URL 
+    ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback` 
+    : 'http://localhost:3000/auth/callback';
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: callbackUrl,
+    },
+  })
+
+  if (data.url) {
+    redirect(data.url)
+  }
+
+  if (error) {
+    redirect('/login?message=Could not authenticate user')
+  }
+}
+
