@@ -22,8 +22,8 @@ export default async function DebugPage() {
   try {
     const { error } = await supabase.from('profiles').select('id').limit(1)
     if (error) throw error
-  } catch (err: any) {
-    dbStatus = err.message
+  } catch (err) {
+    dbStatus = err instanceof Error ? err.message : 'Unknown error'
     isDbConnected = false
   }
 
@@ -49,8 +49,8 @@ export default async function DebugPage() {
           latest: data?.[0]?.created_at || null,
           error: null
         }
-      } catch (err: any) {
-        return { name: table, count: 0, latest: null, error: err.message }
+      } catch (err) {
+        return { name: table, count: 0, latest: null, error: err instanceof Error ? err.message : 'Unknown error' }
       }
     })
   )
@@ -67,6 +67,7 @@ export default async function DebugPage() {
   }
 
   // Get Active Members with auth.users if possible
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let membersData: any[] = []
   try {
     const { data: usersData, error: authError } = await supabase.auth.admin.listUsers()
@@ -94,7 +95,7 @@ export default async function DebugPage() {
         }
       })
     }
-  } catch (err) {
+  } catch {
     const { data: profilesData } = await supabase.from('profiles').select('*')
     membersData = (profilesData || []).map(p => ({
       id: p.id,
@@ -253,6 +254,7 @@ export default async function DebugPage() {
           </h2>
           <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
             {activityLog && activityLog.length > 0 ? (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               activityLog.map((log: any) => (
                 <div key={log.id} className="text-sm bg-[#1a1a2a] p-3 rounded-lg border border-gray-800 flex gap-3 items-start">
                   <span className="text-gray-500 min-w-[65px]">{new Date(log.created_at).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</span>

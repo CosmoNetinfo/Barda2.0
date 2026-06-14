@@ -9,7 +9,7 @@ export default function InstallGuidePage() {
           <ArrowLeft size={24} />
         </Link>
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 font-barlow uppercase">Installa l'App</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 font-barlow uppercase">Installa l&apos;App</h1>
           <p className="text-gray-500 font-medium mt-1">Aggiungi Bardò alla schermata home.</p>
         </div>
       </header>
@@ -30,21 +30,21 @@ export default function InstallGuidePage() {
               <li className="relative">
                 <span className="absolute -left-[35px] bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm">1</span>
                 <p className="font-bold text-gray-900 mb-1">Apri in Safari</p>
-                <p className="text-gray-500 text-sm">Assicurati di usare Safari, non Chrome o l'app Google.</p>
+                <p className="text-gray-500 text-sm">Assicurati di usare Safari, non Chrome o l&apos;app Google.</p>
               </li>
               <li className="relative">
                 <span className="absolute -left-[35px] bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm">2</span>
-                <p className="font-bold text-gray-900 mb-1 flex items-center gap-2">Tocca l'icona Condividi <span className="bg-white p-1 rounded-md shadow-sm border border-gray-200 text-blue-500"><Share size={16} /></span></p>
+                <p className="font-bold text-gray-900 mb-1 flex items-center gap-2">Tocca l&apos;icona Condividi <span className="bg-white p-1 rounded-md shadow-sm border border-gray-200 text-blue-500"><Share size={16} /></span></p>
                 <p className="text-gray-500 text-sm">Si trova in basso al centro dello schermo.</p>
               </li>
               <li className="relative">
                 <span className="absolute -left-[35px] bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm">3</span>
-                <p className="font-bold text-gray-900 mb-1 flex items-center gap-2">Scegli "Aggiungi a schermata Home" <span className="bg-white p-1 rounded-md shadow-sm border border-gray-200 text-gray-700"><PlusSquare size={16} /></span></p>
+                <p className="font-bold text-gray-900 mb-1 flex items-center gap-2">Scegli &quot;Aggiungi a schermata Home&quot; <span className="bg-white p-1 rounded-md shadow-sm border border-gray-200 text-gray-700"><PlusSquare size={16} /></span></p>
                 <p className="text-gray-500 text-sm">Scorri il menu verso il basso per trovare questa opzione.</p>
               </li>
               <li className="relative">
                 <span className="absolute -left-[35px] bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm">4</span>
-                <p className="font-bold text-gray-900 mb-1">Tocca "Aggiungi"</p>
+                <p className="font-bold text-gray-900 mb-1">Tocca &quot;Aggiungi&quot;</p>
                 <p className="text-gray-500 text-sm">In alto a destra.</p>
               </li>
             </ol>
@@ -74,12 +74,12 @@ export default function InstallGuidePage() {
               </li>
               <li className="relative">
                 <span className="absolute -left-[35px] bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm">3</span>
-                <p className="font-bold text-gray-900 mb-1">Scegli "Aggiungi a schermata Home"</p>
-                <p className="text-gray-500 text-sm">In alcuni telefoni potrebbe esserci scritto "Installa app".</p>
+                <p className="font-bold text-gray-900 mb-1">Scegli &quot;Aggiungi a schermata Home&quot;</p>
+                <p className="text-gray-500 text-sm">In alcuni telefoni potrebbe esserci scritto &quot;Installa app&quot;.</p>
               </li>
               <li className="relative">
                 <span className="absolute -left-[35px] bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm">4</span>
-                <p className="font-bold text-gray-900 mb-1">Conferma "Installa"</p>
+                <p className="font-bold text-gray-900 mb-1">Conferma &quot;Installa&quot;</p>
               </li>
             </ol>
           </div>

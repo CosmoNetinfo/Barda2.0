@@ -106,6 +106,7 @@ export default async function Home() {
           
           {myTasks.length > 0 ? (
             <ul className="space-y-1 flex-1">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {myTasks.slice(0, 4).map((task: any) => (
                 <li key={task.id} className="flex gap-3 items-center min-h-[44px] hover:bg-gray-50 rounded-lg -mx-2 px-2 transition-colors">
                   <div className="w-5 h-5 rounded border-2 border-gray-300 flex-shrink-0" />
@@ -143,6 +144,7 @@ export default async function Home() {
         
         {latestIdeas && latestIdeas.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {latestIdeas.map((idea: any) => (
               <Link href="/ideas" key={idea.id} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition block">
                 <div className="flex justify-between items-start mb-2">

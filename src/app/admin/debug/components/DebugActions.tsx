@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useTransition } from 'react'
 import { forceRevalidate, clearActivityLog } from '@/app/actions/debug'
-import { RefreshCw, Trash2, Loader2, ServerCrash } from 'lucide-react'
+import { RefreshCw, Trash2, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export default function DebugActions() {
