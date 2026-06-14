@@ -19,17 +19,23 @@ export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
       {/* Overlay menu "Altro" */}
       {isMoreOpen && (
         <div 
-          className="md:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm transition-opacity"
+          className="md:hidden fixed inset-0 bg-black/60 z-[100] backdrop-blur-sm transition-opacity"
           onClick={handleClose}
         >
           <div 
-            className="absolute bottom-20 left-4 right-4 bg-white rounded-3xl p-6 shadow-2xl animate-in slide-in-from-bottom-10"
+            className="absolute bottom-24 left-4 right-4 bg-white rounded-3xl p-6 shadow-2xl animate-in slide-in-from-bottom-10"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-bold text-xl text-gray-900">Altre Sezioni</h3>
-              <button onClick={handleClose} className="p-2 bg-gray-100 rounded-full text-gray-500">
-                <X size={20} />
+              <button 
+                onClick={() => {
+                  alert("DEBUG: Click su X per chiudere!");
+                  handleClose();
+                }} 
+                className="p-3 bg-red-100 rounded-full text-red-600 hover:bg-red-200"
+              >
+                <X size={24} />
               </button>
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -46,7 +52,7 @@ export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
       )}
 
       {/* Bottom Nav Bar */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-gradient-to-r from-success to-emerald-500 flex justify-around p-2 z-50 pb-safe shadow-[0_-10px_30px_-15px_rgba(46,139,58,0.5)]">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-gradient-to-r from-success to-emerald-500 flex justify-around p-2 z-[110] pb-safe shadow-[0_-10px_30px_-15px_rgba(46,139,58,0.5)]">
         <NavItem href="/" icon={<Home size={24} />} label="Home" active={pathname === '/'} />
         <NavItem href="/ideas" icon={<Lightbulb size={24} />} label="Idee" active={pathname === '/ideas'} />
         <NavItem href="/tasks" icon={<CheckSquare size={24} />} label="Task" active={pathname === '/tasks'} />
@@ -64,7 +70,7 @@ export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
           <div className={`${isMoreOpen ? 'bg-white/20 p-1.5 rounded-full shadow-sm' : 'p-1.5'}`}>
             <Menu size={24} />
           </div>
-          <span className="text-[10px] font-bold">Altro</span>
+          <span className="text-[10px] font-bold">Altro ✨</span>
         </button>
       </nav>
     </>
