@@ -101,6 +101,12 @@ export default async function ProfilePage() {
               </form>
             </div>
           </div>
+          
+          <div className="text-center pt-4">
+            <p className="text-xs text-gray-400 font-medium">
+              Sviluppato con ❤️ da <a href="https://cosmonet.info" target="_blank" rel="noopener noreferrer" className="text-gray-500 font-bold hover:text-primary transition-colors">Daniele Spalletti di CosmoNet.info</a>
+            </p>
+          </div>
         </div>
       </div>
     </div>
