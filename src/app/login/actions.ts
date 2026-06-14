@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 export async function login(formData: FormData) {
@@ -45,11 +46,14 @@ export async function signup(formData: FormData) {
 export async function signInWithGoogle() {
   const supabase = createClient()
   
-  // NOTE: next/headers needs to know the domain, but in Server Actions 
-  // you typically construct the callback URL. For local dev:
-  const callbackUrl = process.env.NEXT_PUBLIC_SITE_URL 
-    ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback` 
-    : 'http://localhost:3000/auth/callback';
+
+  
+  const headersList = headers()
+  const host = headersList.get('host')
+  const protocol = host?.includes('localhost') ? 'http' : 'https'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `${protocol}://${host}`
+  
+  const callbackUrl = `${siteUrl}/auth/callback`;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
