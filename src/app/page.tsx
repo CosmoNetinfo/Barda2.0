@@ -31,7 +31,8 @@ export default async function Home() {
     supabase.from('ideas').select('id, title, description, created_at, category, profiles(name), idea_votes(count)').order('created_at', { ascending: false }).limit(3)
   ])
 
-  const userName = profile?.name || user.email?.split('@')[0] || 'Membro'
+  const fullName = profile?.name || user.email?.split('@')[0] || 'Membro'
+  const firstName = fullName.split(' ')[0]
   const nextEvent = nextEvents?.[0]
   // Extract tasks from join
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -41,22 +42,22 @@ export default async function Home() {
     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-8">
       <PwaInstallBanner />
 
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Ciao, {userName}! 👋</h1>
-          <p className="text-gray-500 mt-1">Ecco cosa succede nei Bardasci oggi.</p>
+      <header className="flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold tracking-tight truncate">Ciao, {firstName}!</h1>
+          <p className="text-gray-500 mt-1 truncate">Ecco cosa succede nei Bardasci oggi.</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 md:gap-4 shrink-0">
           <form action="/auth/signout" method="post">
-            <button className="text-sm font-semibold text-gray-500 hover:text-black transition-colors">
+            <button className="text-sm font-semibold text-gray-500 hover:text-black transition-colors hidden sm:block">
               Esci
             </button>
           </form>
           {profile?.avatar_url ? (
-            <img src={profile.avatar_url} alt="Avatar" className="w-10 h-10 rounded-full border border-gray-200" />
+            <img src={profile.avatar_url} alt="Avatar" className="w-10 h-10 rounded-full border border-gray-200 object-cover" />
           ) : (
             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-500 border border-gray-300">
-              {userName[0].toUpperCase()}
+              {firstName[0].toUpperCase()}
             </div>
           )}
         </div>
