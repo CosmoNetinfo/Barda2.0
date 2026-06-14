@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useRef } from 'react'
 import { updateProfile } from '@/app/actions/profile'
-import { Loader2, Camera, User, FileText, Upload } from 'lucide-react'
+import { Loader2, Camera, User, FileText } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 
 const DEFAULT_AVATARS = [
