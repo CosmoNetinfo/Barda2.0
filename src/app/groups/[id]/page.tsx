@@ -2,12 +2,21 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import IdeaActions from './IdeaActions'
+import EventActions from './EventActions'
 
-export default async function GroupPage({ params }: { params: { id: string } }) {
+export default async function GroupPage({ 
+  params,
+  searchParams 
+}: { 
+  params: { id: string },
+  searchParams: { tab?: string }
+}) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
+
+  const tab = searchParams.tab || 'ideas'
 
   // Otteniamo il gruppo
   const { data: group, error: groupError } = await supabase
@@ -20,16 +29,27 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
     return <div className="p-8 text-center text-red-600">Gruppo non trovato o accesso negato.</div>
   }
 
-  // Otteniamo le idee e i relativi voti
-  const { data: ideas, error: ideasError } = await supabase
+  // Fetch Ideas
+  const { data: ideas } = await supabase
     .from('ideas')
-    .select(`
-      *,
-      author:author_id(email),
-      votes:idea_votes(user_id, vote)
-    `)
+    .select('*, author:author_id(email), votes:idea_votes(user_id, vote)')
     .eq('group_id', params.id)
     .order('created_at', { ascending: false })
+
+  // Fetch Events
+  const { data: events } = await supabase
+    .from('events')
+    .select('*, author:author_id(email), rsvps:event_rsvp(user_id, status)')
+    .eq('group_id', params.id)
+    .order('date', { ascending: true }) // Prossimi eventi prima
+
+  const tabs = [
+    { id: 'ideas', label: '💡 Idee' },
+    { id: 'events', label: '📅 Eventi' },
+    { id: 'tasks', label: '✅ Task', disabled: true },
+    { id: 'polls', label: '🗳️ Sondaggi', disabled: true },
+    { id: 'places', label: '📍 Luoghi', disabled: true },
+  ]
 
   return (
     <main className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -51,21 +71,28 @@ export default async function GroupPage({ params }: { params: { id: string } }) 
           </div>
         </header>
 
-        {/* Tab di navigazione (per ora c'è solo la bacheca idee) */}
-        <div className="mb-6 flex gap-4 border-b border-gray-200">
-          <div className="border-b-2 border-black pb-2 text-sm font-semibold text-black">
-            💡 Bacheca Idee
-          </div>
-          <div className="pb-2 text-sm font-medium text-gray-400 opacity-50 cursor-not-allowed">
-            📅 Eventi (v0.3)
-          </div>
-          <div className="pb-2 text-sm font-medium text-gray-400 opacity-50 cursor-not-allowed">
-            ✅ Task (v0.5)
-          </div>
+        {/* Tab di navigazione */}
+        <div className="mb-6 flex gap-4 border-b border-gray-200 overflow-x-auto">
+          {tabs.map((t) => (
+            t.disabled ? (
+              <div key={t.id} className="pb-2 text-sm font-medium text-gray-400 opacity-50 cursor-not-allowed whitespace-nowrap">
+                {t.label}
+              </div>
+            ) : (
+              <Link 
+                key={t.id} 
+                href={`/groups/${group.id}?tab=${t.id}`}
+                className={`pb-2 text-sm font-semibold whitespace-nowrap ${tab === t.id ? 'border-b-2 border-black text-black' : 'text-gray-500 hover:text-black'}`}
+              >
+                {t.label}
+              </Link>
+            )
+          ))}
         </div>
 
-        {/* Client component per creare e gestire le idee */}
-        <IdeaActions groupId={group.id} ideas={ideas || []} currentUserId={user.id} />
+        {/* Render Tab Content */}
+        {tab === 'ideas' && <IdeaActions groupId={group.id} ideas={ideas || []} currentUserId={user.id} />}
+        {tab === 'events' && <EventActions groupId={group.id} events={events || []} currentUserId={user.id} />}
         
       </div>
     </main>
