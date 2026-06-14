@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 
 const inter = Inter({
