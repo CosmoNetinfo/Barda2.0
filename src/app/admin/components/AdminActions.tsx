@@ -33,9 +33,9 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
         ))}
       </div>
 
-      <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm overflow-x-auto">
+      <div className="bg-white p-4 sm:p-6 rounded-3xl border border-gray-100 shadow-sm overflow-x-auto">
         {activeTab === 'members' && (
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[500px]">
             <thead>
               <tr className="border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500">
                 <th className="p-3">Nome</th>
@@ -71,7 +71,7 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
         )}
 
         {activeTab === 'ideas' && (
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[500px]">
             <thead>
               <tr className="border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500">
                 <th className="p-3">Titolo</th>
@@ -106,7 +106,7 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
         )}
 
         {activeTab === 'tasks' && (
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[500px]">
             <thead>
               <tr className="border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500">
                 <th className="p-3">Task</th>
@@ -131,7 +131,7 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
         )}
 
         {activeTab === 'events' && (
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[500px]">
             <thead>
               <tr className="border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500">
                 <th className="p-3">Evento</th>
@@ -159,7 +159,7 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
         )}
 
         {activeTab === 'logs' && (
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[500px]">
             <thead>
               <tr className="border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500">
                 <th className="p-3">Data</th>
