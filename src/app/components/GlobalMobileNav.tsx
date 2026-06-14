@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { Home, Lightbulb, CheckSquare, Calendar, Menu, BarChart2, MapPin, Users, User, X } from 'lucide-react'
 import { useState } from 'react'
 
-export default function GlobalMobileNav() {
+export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
   const pathname = usePathname()
   const [isMoreOpen, setIsMoreOpen] = useState(false)
 
@@ -32,6 +32,9 @@ export default function GlobalMobileNav() {
               <MoreItem href="/places" icon={<MapPin size={28} className="text-emerald-500" />} label="Luoghi" onClick={() => setIsMoreOpen(false)} />
               <MoreItem href="/members" icon={<Users size={28} className="text-indigo-500" />} label="Membri" onClick={() => setIsMoreOpen(false)} />
               <MoreItem href="/profile" icon={<User size={28} className="text-blue-500" />} label="Profilo" onClick={() => setIsMoreOpen(false)} />
+              {role === 'founder' && (
+                <MoreItem href="/admin/debug" icon={<BarChart2 size={28} className="text-rose-500" />} label="Debug" onClick={() => setIsMoreOpen(false)} />
+              )}
             </div>
           </div>
         </div>

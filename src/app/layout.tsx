@@ -3,6 +3,7 @@ import { Inter, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { Home, Calendar, CheckSquare, Lightbulb, MapPin, Users, BarChart2, User } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,18 +29,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  let role = 'user';
+  if (user) {
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    if (profile?.role) role = profile.role;
+  }
+
   return (
     <html lang="it">
       <body className={`${inter.variable} ${barlowCondensed.variable} font-sans antialiased bg-gray-50 pb-20 md:pb-0 md:pl-64`}>
         {/* Sidebar Desktop */}
         <aside className="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-white border-r border-gray-200 z-50">
           <div className="p-6 flex items-center gap-3">
-            <img src="/bardasci-logo.png" alt="Logo" className="h-12 object-contain" />
+            <img src="/bardasci-logo.svg" alt="Logo" className="h-12 object-contain" />
             <span className="font-barlow font-bold text-3xl tracking-tight text-primary">Bardò</span>
           </div>
           <nav className="flex-1 px-4 space-y-2 mt-2">
@@ -51,6 +61,9 @@ export default function RootLayout({
             <NavItem href="/places" icon={<MapPin size={20} />} label="Luoghi" />
             <NavItem href="/members" icon={<Users size={20} />} label="Membri" />
             <NavItem href="/profile" icon={<User size={20} />} label="Profilo" />
+            {role === 'founder' && (
+              <NavItem href="/admin/debug" icon={<BarChart2 size={20} className="text-rose-500" />} label="Debug" />
+            )}
           </nav>
         </aside>
 
@@ -60,7 +73,7 @@ export default function RootLayout({
         </main>
 
         <GlobalFAB />
-        <GlobalMobileNav />
+        <GlobalMobileNav role={role} />
       </body>
     </html>
   );
