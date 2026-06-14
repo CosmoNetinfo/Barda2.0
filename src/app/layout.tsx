@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Inter, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
-import { Home, Calendar, CheckSquare, Lightbulb, MapPin, Users, BarChart2 } from "lucide-react";
+import { Home, Calendar, CheckSquare, Lightbulb, MapPin, Users, BarChart2, User } from "lucide-react";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+
+const barlowCondensed = Barlow_Condensed({
+  weight: ["400", "500", "600", "700", "800"],
+  subsets: ["latin"],
+  variable: "--font-barlow-condensed",
 });
 
 import GlobalMobileNav from "./components/GlobalMobileNav";
@@ -31,11 +31,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 pb-20 md:pb-0 md:pl-64`}>
+      <body className={`${inter.variable} ${barlowCondensed.variable} font-sans antialiased bg-gray-50 pb-20 md:pb-0 md:pl-64`}>
         {/* Sidebar Desktop */}
         <aside className="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-white border-r border-gray-200 z-50">
-          <div className="p-6 font-bold text-2xl tracking-tighter">Bardò</div>
-          <nav className="flex-1 px-4 space-y-2">
+          <div className="p-6 flex items-center gap-2">
+            <img src="/bardasci-logo.png" alt="Logo" className="h-8 object-contain" />
+            <span className="font-barlow font-bold text-3xl tracking-tight text-primary">Bardò</span>
+          </div>
+          <nav className="flex-1 px-4 space-y-2 mt-2">
             <NavItem href="/" icon={<Home size={20} />} label="Home" />
             <NavItem href="/events" icon={<Calendar size={20} />} label="Eventi" />
             <NavItem href="/tasks" icon={<CheckSquare size={20} />} label="Task" />
@@ -43,6 +46,7 @@ export default function RootLayout({
             <NavItem href="/polls" icon={<BarChart2 size={20} />} label="Sondaggi" />
             <NavItem href="/places" icon={<MapPin size={20} />} label="Luoghi" />
             <NavItem href="/members" icon={<Users size={20} />} label="Membri" />
+            <NavItem href="/profile" icon={<User size={20} />} label="Profilo" />
           </nav>
         </aside>
 

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Lightbulb, CheckSquare, Calendar, Menu, BarChart2, MapPin, Users, X } from 'lucide-react'
+import { Home, Lightbulb, CheckSquare, Calendar, Menu, BarChart2, MapPin, Users, User, X } from 'lucide-react'
 import { useState } from 'react'
 
 export default function GlobalMobileNav() {
@@ -31,6 +31,7 @@ export default function GlobalMobileNav() {
               <MoreItem href="/polls" icon={<BarChart2 size={28} className="text-violet-500" />} label="Sondaggi" onClick={() => setIsMoreOpen(false)} />
               <MoreItem href="/places" icon={<MapPin size={28} className="text-emerald-500" />} label="Luoghi" onClick={() => setIsMoreOpen(false)} />
               <MoreItem href="/members" icon={<Users size={28} className="text-indigo-500" />} label="Membri" onClick={() => setIsMoreOpen(false)} />
+              <MoreItem href="/profile" icon={<User size={28} className="text-blue-500" />} label="Profilo" onClick={() => setIsMoreOpen(false)} />
             </div>
           </div>
         </div>
