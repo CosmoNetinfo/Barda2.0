@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import IdeaActions from './IdeaActions'
 import EventActions from './EventActions'
+import TaskActions from './TaskActions'
+import PlaceActions from './PlaceActions'
 
 export default async function GroupPage({ 
   params,
@@ -41,14 +43,28 @@ export default async function GroupPage({
     .from('events')
     .select('*, author:author_id(email), rsvps:event_rsvp(user_id, status)')
     .eq('group_id', params.id)
-    .order('date', { ascending: true }) // Prossimi eventi prima
+    .order('date', { ascending: true })
+
+  // Fetch Tasks
+  const { data: tasks } = await supabase
+    .from('tasks')
+    .select('*, author:author_id(email), assignees:task_assignees(user_id, user:user_id(email))')
+    .eq('group_id', params.id)
+    .order('created_at', { ascending: false })
+
+  // Fetch Places
+  const { data: places } = await supabase
+    .from('places')
+    .select('*, author:author_id(email)')
+    .eq('group_id', params.id)
+    .order('created_at', { ascending: false })
 
   const tabs = [
     { id: 'ideas', label: '💡 Idee' },
     { id: 'events', label: '📅 Eventi' },
-    { id: 'tasks', label: '✅ Task', disabled: true },
+    { id: 'tasks', label: '✅ Task' },
+    { id: 'places', label: '📍 Luoghi' },
     { id: 'polls', label: '🗳️ Sondaggi', disabled: true },
-    { id: 'places', label: '📍 Luoghi', disabled: true },
   ]
 
   return (
@@ -93,6 +109,8 @@ export default async function GroupPage({
         {/* Render Tab Content */}
         {tab === 'ideas' && <IdeaActions groupId={group.id} ideas={ideas || []} currentUserId={user.id} />}
         {tab === 'events' && <EventActions groupId={group.id} events={events || []} currentUserId={user.id} />}
+        {tab === 'tasks' && <TaskActions groupId={group.id} tasks={tasks || []} currentUserId={user.id} />}
+        {tab === 'places' && <PlaceActions groupId={group.id} places={places || []} />}
         
       </div>
     </main>
