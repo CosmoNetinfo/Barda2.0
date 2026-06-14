@@ -5,6 +5,7 @@ import IdeaActions from './IdeaActions'
 import EventActions from './EventActions'
 import TaskActions from './TaskActions'
 import PlaceActions from './PlaceActions'
+import PollActions from './PollActions'
 
 export default async function GroupPage({ 
   params,
@@ -59,12 +60,24 @@ export default async function GroupPage({
     .eq('group_id', params.id)
     .order('created_at', { ascending: false })
 
+  // Fetch Polls
+  const { data: polls } = await supabase
+    .from('polls')
+    .select(`
+      *, 
+      author:author_id(email), 
+      options:poll_options(id, label),
+      votes:poll_votes(option_id, user_id)
+    `)
+    .eq('group_id', params.id)
+    .order('created_at', { ascending: false })
+
   const tabs = [
     { id: 'ideas', label: '💡 Idee' },
     { id: 'events', label: '📅 Eventi' },
+    { id: 'polls', label: '🗳️ Sondaggi' },
     { id: 'tasks', label: '✅ Task' },
     { id: 'places', label: '📍 Luoghi' },
-    { id: 'polls', label: '🗳️ Sondaggi', disabled: true },
   ]
 
   return (
@@ -109,6 +122,7 @@ export default async function GroupPage({
         {/* Render Tab Content */}
         {tab === 'ideas' && <IdeaActions groupId={group.id} ideas={ideas || []} currentUserId={user.id} />}
         {tab === 'events' && <EventActions groupId={group.id} events={events || []} currentUserId={user.id} />}
+        {tab === 'polls' && <PollActions groupId={group.id} polls={polls || []} currentUserId={user.id} />}
         {tab === 'tasks' && <TaskActions groupId={group.id} tasks={tasks || []} currentUserId={user.id} />}
         {tab === 'places' && <PlaceActions groupId={group.id} places={places || []} />}
         
