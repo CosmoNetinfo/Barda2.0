@@ -91,11 +91,20 @@ function MoreItem({ href, icon, label, onClose }: { href: string, icon: React.Re
   return (
     <a 
       href={href}
-      onClick={() => {
+      onClick={(e) => {
+        e.preventDefault()
+        alert(`>>> DEBUG VISIVO: Hai cliccato su ${label}. Sto forzando il caricamento di ${href}`)
         console.log(`>>> DEBUG: Click su ${label} (${href})`)
-        onClose()
+        
+        // Forzatura bruta del browser
+        window.location.href = href
+        
+        // Chiudiamo il menu con un minimo di ritardo per non distruggere il tag <a> mentre naviga
+        setTimeout(() => {
+          onClose()
+        }, 300)
       }} 
-      className="flex w-full flex-col items-center gap-3 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 active:scale-95 transition-all border-none focus:outline-none"
+      className="flex w-full flex-col items-center gap-3 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 active:scale-95 transition-all border-none focus:outline-none cursor-pointer"
     >
       <div className="bg-white p-3 rounded-full shadow-sm pointer-events-none">
         {icon}
