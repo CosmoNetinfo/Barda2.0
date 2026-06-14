@@ -17,7 +17,7 @@ export async function createPlace(formData: FormData) {
     return { error: 'Il nome è obbligatorio' }
   }
 
-  const { error } = await supabase.from('places').insert({
+  const { data: place, error } = await supabase.from('places').insert({
     author_id: user.id,
     name,
     category: category || null,

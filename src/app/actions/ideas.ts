@@ -16,7 +16,7 @@ export async function createIdea(formData: FormData) {
     return { error: 'Il titolo è obbligatorio' }
   }
 
-  const { error } = await supabase.from('ideas').insert({
+  const { data: idea, error } = await supabase.from('ideas').insert({
     author_id: user.id,
     title,
     description: description || null,

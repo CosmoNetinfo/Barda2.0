@@ -26,7 +26,7 @@ export async function createTask(formData: FormData) {
   }).select('id').single()
 
   if (error || !task) {
-    return { error: 'Errore durante la creazione del task' }
+    return { error: `Errore durante la creazione del task: ${error?.message || 'Risposta vuota'}` }
   }
 
   if (assigneeId) {

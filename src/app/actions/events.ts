@@ -18,7 +18,7 @@ export async function createEvent(formData: FormData) {
     return { error: 'Titolo e Data sono obbligatori' }
   }
 
-  const { error } = await supabase.from('events').insert({
+  const { data: event, error } = await supabase.from('events').insert({
     author_id: user.id,
     title,
     description: description || null,
