@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
+import GroupActions from './components/GroupActions'
 
 export default async function Home() {
   const supabase = createClient()
@@ -31,11 +32,9 @@ export default async function Home() {
           </div>
         </header>
 
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-xl font-semibold">I tuoi Gruppi</h2>
-          <button className="rounded-md bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-black/90">
-            + Nuovo Gruppo
-          </button>
+          <GroupActions />
         </div>
 
         {error && (
