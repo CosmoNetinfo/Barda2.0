@@ -30,7 +30,7 @@ export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
             <div className="grid grid-cols-3 gap-4">
               <MoreItem href="/polls" icon={<BarChart2 size={28} className="text-violet-500" />} label="Sondaggi" onClick={() => setIsMoreOpen(false)} />
               <MoreItem href="/places" icon={<MapPin size={28} className="text-emerald-500" />} label="Luoghi" onClick={() => setIsMoreOpen(false)} />
-              <MoreItem href="/members" icon={<Users size={28} className="text-indigo-500" />} label="Membri" onClick={() => setIsMoreOpen(false)} />
+              <MoreItem href="/members?refresh=1" icon={<Users size={28} className="text-indigo-500" />} label="Membri" onClick={() => setIsMoreOpen(false)} />
               <MoreItem href="/profile" icon={<User size={28} className="text-blue-500" />} label="Profilo" onClick={() => setIsMoreOpen(false)} />
               {role === 'founder' && (
                 <MoreItem href="/admin/debug" icon={<BarChart2 size={28} className="text-rose-500" />} label="Debug" onClick={() => setIsMoreOpen(false)} />
