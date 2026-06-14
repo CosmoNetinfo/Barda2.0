@@ -10,12 +10,12 @@ export default function PlaceItem({ place }: { place: any }) {
 
   const handleStatusChange = (newStatus: string) => {
     if (newStatus !== place.status) {
-      startTransition(() => updatePlaceStatus(place.id, newStatus))
+      startTransition(() => { updatePlaceStatus(place.id, newStatus) })
     }
   }
 
   const handleRating = (rating: number) => {
-    startTransition(() => updatePlaceStatus(place.id, place.status, rating))
+    startTransition(() => { updatePlaceStatus(place.id, place.status, rating) })
   }
 
   return (

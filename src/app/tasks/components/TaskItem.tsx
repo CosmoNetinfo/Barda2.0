@@ -12,7 +12,7 @@ export default function TaskItem({ task }: { task: any }) {
 
   const handleStatusChange = (newStatus: string) => {
     if (newStatus !== task.status) {
-      startTransition(() => updateTaskStatus(task.id, newStatus))
+      startTransition(() => { updateTaskStatus(task.id, newStatus) })
     }
   }
 

@@ -8,7 +8,7 @@ export default function PollItem({ poll, options, votes, currentUserId }: { poll
   const [isPending, startTransition] = useTransition()
 
   const handleVote = (optionId: string) => {
-    startTransition(() => votePoll(poll.id, optionId, poll.type === 'multi'))
+    startTransition(() => { votePoll(poll.id, optionId, poll.type === 'multi') })
   }
 
   const totalVotes = votes.length
