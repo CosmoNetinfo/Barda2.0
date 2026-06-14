@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
-import GroupActions from './components/GroupActions'
+import { Calendar, CheckSquare, Lightbulb } from 'lucide-react'
 
 export default async function Home() {
   const supabase = createClient()
@@ -12,56 +12,124 @@ export default async function Home() {
     redirect('/login')
   }
 
-  // Fetch groups the user belongs to
-  const { data: groups, error } = await supabase
-    .from('groups')
+  // Fetch some summary data for the dashboard
+  // (In a real app, these would fetch from the actual tables.
+  // We'll mock the UI structure here so it looks complete)
+  
+  const { data: profile } = await supabase
+    .from('profiles')
     .select('*')
-    .order('created_at', { ascending: false })
+    .eq('id', user.id)
+    .single()
+
+  const userName = profile?.name || user.email?.split('@')[0] || 'Membro'
 
   return (
-    <main className="min-h-screen p-4 md:p-8">
-      <div className="mx-auto max-w-4xl">
-        <header className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold">I Bardasci</h1>
-          <div className="flex gap-4">
-            <span className="text-sm text-gray-500">{user.email}</span>
-            <form action="/auth/signout" method="post">
-              <button className="text-sm font-semibold text-red-600 hover:underline">
-                Esci
-              </button>
-            </form>
-          </div>
-        </header>
-
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-xl font-semibold">I tuoi Gruppi</h2>
-          <GroupActions />
+    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-8">
+      <header className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Ciao, {userName}! 👋</h1>
+          <p className="text-gray-500 mt-1">Ecco cosa succede nei Bardasci oggi.</p>
         </div>
-
-        {error && (
-          <div className="mb-4 rounded-md bg-red-50 p-4 text-red-600">
-            Errore nel caricamento dei gruppi: {error.message}
-          </div>
-        )}
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {groups?.map((group) => (
-            <Link href={`/groups/${group.id}`} key={group.id} className="rounded-lg border bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
-              <h3 className="font-semibold text-lg text-black">{group.name}</h3>
-              {group.description && <p className="text-sm text-gray-500 mt-1">{group.description}</p>}
-              <div className="mt-4 flex items-center justify-between text-xs text-gray-400">
-                <span>Codice: {group.invite_code}</span>
-              </div>
-            </Link>
-          ))}
-
-          {(!groups || groups.length === 0) && !error && (
-            <div className="col-span-full rounded-lg border border-dashed p-8 text-center text-gray-500">
-              Non sei ancora in nessun gruppo. Creane uno nuovo o unisciti tramite codice di invito!
+        <div className="flex items-center gap-4">
+          <form action="/auth/signout" method="post">
+            <button className="text-sm font-semibold text-gray-500 hover:text-black transition-colors">
+              Esci
+            </button>
+          </form>
+          {profile?.avatar_url ? (
+            <img src={profile.avatar_url} alt="Avatar" className="w-10 h-10 rounded-full border border-gray-200" />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-500 border border-gray-300">
+              {userName[0].toUpperCase()}
             </div>
           )}
         </div>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Prossimo Evento */}
+        <section className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm col-span-1 md:col-span-2 flex flex-col justify-between relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-8 opacity-5">
+            <Calendar size={120} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 text-indigo-600 mb-4">
+              <Calendar size={20} />
+              <h2 className="font-semibold text-sm uppercase tracking-wider">Prossimo Evento</h2>
+            </div>
+            <h3 className="text-2xl font-bold mb-1">Riunione Redazione</h3>
+            <p className="text-gray-600 mb-6">Sabato 20 Giugno • 18:30 • Sede</p>
+          </div>
+          <div className="flex gap-2">
+            <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-indigo-700 transition">Ci sarò</button>
+            <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium text-sm hover:bg-gray-200 transition">Non posso</button>
+          </div>
+        </section>
+
+        {/* Task Assegnati */}
+        <section className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+          <div className="flex items-center gap-2 text-rose-500 mb-4">
+            <CheckSquare size={20} />
+            <h2 className="font-semibold text-sm uppercase tracking-wider">I Miei Task</h2>
+          </div>
+          <ul className="space-y-3 flex-1">
+            <li className="flex gap-3 items-start">
+              <input type="checkbox" className="mt-1 rounded border-gray-300 text-rose-500 focus:ring-rose-500" />
+              <span className="text-sm">Scrivere bozza articolo su Spoleto</span>
+            </li>
+            <li className="flex gap-3 items-start">
+              <input type="checkbox" className="mt-1 rounded border-gray-300 text-rose-500 focus:ring-rose-500" />
+              <span className="text-sm">Montaggio video intervista</span>
+            </li>
+          </ul>
+          <Link href="/tasks" className="text-sm text-rose-500 font-medium hover:underline mt-4">Vedi tutti →</Link>
+        </section>
       </div>
-    </main>
+
+      {/* Ultime Idee */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2 text-amber-500">
+            <Lightbulb size={20} />
+            <h2 className="font-semibold">Ultime Idee Proposte</h2>
+          </div>
+          <Link href="/ideas" className="text-sm text-gray-500 hover:text-black">Esplora</Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Mock Idea 1 */}
+          <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+            <div className="flex justify-between items-start mb-2">
+              <span className="text-xs font-semibold bg-blue-50 text-blue-600 px-2 py-1 rounded-full">Articolo</span>
+              <span className="text-xs text-gray-400">Oggi</span>
+            </div>
+            <h3 className="font-bold text-gray-900 mb-1">I buchi di Spoleto</h3>
+            <p className="text-sm text-gray-500 line-clamp-2">Un pezzo satirico sulle buche nelle strade dopo la pioggia...</p>
+            <div className="mt-4 flex justify-between items-center text-sm">
+              <span className="text-gray-400">Di Dany</span>
+              <div className="flex gap-2 text-gray-500">
+                <span>👍 4</span>
+              </div>
+            </div>
+          </div>
+          {/* Mock Idea 2 */}
+          <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+            <div className="flex justify-between items-start mb-2">
+              <span className="text-xs font-semibold bg-purple-50 text-purple-600 px-2 py-1 rounded-full">Video</span>
+              <span className="text-xs text-gray-400">Ieri</span>
+            </div>
+            <h3 className="font-bold text-gray-900 mb-1">Vox populi in piazza</h3>
+            <p className="text-sm text-gray-500 line-clamp-2">Andiamo in piazza Garibaldi a chiedere cosa pensano del nuovo ponte.</p>
+            <div className="mt-4 flex justify-between items-center text-sm">
+              <span className="text-gray-400">Di Marco</span>
+              <div className="flex gap-2 text-gray-500">
+                <span>👍 8</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
   )
 }

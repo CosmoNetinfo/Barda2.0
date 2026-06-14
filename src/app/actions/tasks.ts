@@ -8,70 +8,49 @@ export async function createTask(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non autenticato' }
 
-  const groupId = formData.get('groupId') as string
   const title = formData.get('title') as string
   const description = formData.get('description') as string
-  const dueDate = formData.get('dueDate') as string
+  const dueDate = formData.get('due_date') as string
+  const assigneeId = formData.get('assignee_id') as string // For v1 we can allow selecting one assignee from a list
 
-  if (!title) return { error: 'Il titolo è obbligatorio' }
+  if (!title || title.trim() === '') {
+    return { error: 'Il titolo è obbligatorio' }
+  }
 
-  const { error } = await supabase.from('tasks').insert({
-    group_id: groupId,
+  const { data: task, error } = await supabase.from('tasks').insert({
     author_id: user.id,
     title,
     description: description || null,
     due_date: dueDate || null,
     status: 'todo'
-  })
+  }).select('id').single()
 
-  if (error) return { error: 'Errore creazione task' }
+  if (error || !task) {
+    return { error: 'Errore durante la creazione del task' }
+  }
 
-  revalidatePath(`/groups/${groupId}`)
+  if (assigneeId) {
+    await supabase.from('task_assignees').insert({
+      task_id: task.id,
+      user_id: assigneeId
+    })
+  }
+
+  revalidatePath('/tasks')
   return { success: true }
 }
 
-export async function updateTaskStatus(taskId: string, groupId: string, status: string) {
+export async function updateTaskStatus(taskId: string, status: string) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non autenticato' }
 
-  await supabase
+  const { error } = await supabase
     .from('tasks')
     .update({ status })
     .eq('id', taskId)
 
-  revalidatePath(`/groups/${groupId}`)
-}
-
-export async function toggleTaskAssignee(taskId: string, groupId: string) {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Non autenticato' }
-
-  // Check if already assigned
-  const { data: existing } = await supabase
-    .from('task_assignees')
-    .select('user_id')
-    .eq('task_id', taskId)
-    .eq('user_id', user.id)
-    .single()
-
-  if (existing) {
-    // Unassign
-    await supabase
-      .from('task_assignees')
-      .delete()
-      .eq('task_id', taskId)
-      .eq('user_id', user.id)
-  } else {
-    // Assign
-    await supabase
-      .from('task_assignees')
-      .insert({
-        task_id: taskId,
-        user_id: user.id
-      })
-  }
-
-  revalidatePath(`/groups/${groupId}`)
+  if (error) return { error: 'Errore aggiornamento stato' }
+  
+  revalidatePath('/tasks')
 }

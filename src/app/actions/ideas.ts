@@ -8,19 +8,19 @@ export async function createIdea(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non autenticato' }
 
-  const groupId = formData.get('groupId') as string
   const title = formData.get('title') as string
-  const body = formData.get('body') as string
+  const description = formData.get('description') as string
+  const category = formData.get('category') as string
 
   if (!title || title.trim() === '') {
     return { error: 'Il titolo è obbligatorio' }
   }
 
   const { error } = await supabase.from('ideas').insert({
-    group_id: groupId,
     author_id: user.id,
     title,
-    body: body || null,
+    description: description || null,
+    category: category || 'articolo',
     status: 'proposta'
   })
 
@@ -28,16 +28,16 @@ export async function createIdea(formData: FormData) {
     return { error: 'Errore durante la creazione dell\'idea' }
   }
 
-  revalidatePath(`/groups/${groupId}`)
+  revalidatePath('/ideas')
   return { success: true }
 }
 
-export async function voteIdea(ideaId: string, groupId: string, voteType: string) {
+export async function voteIdea(ideaId: string, voteType: 'up' | 'down') {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non autenticato' }
 
-  // Check if vote already exists
+  // Controlla se il voto esiste già
   const { data: existingVote } = await supabase
     .from('idea_votes')
     .select('vote')
@@ -47,14 +47,14 @@ export async function voteIdea(ideaId: string, groupId: string, voteType: string
 
   if (existingVote) {
     if (existingVote.vote === voteType) {
-      // Remove vote if clicking the same one
+      // Rimuove il voto se sta cliccando lo stesso
       await supabase
         .from('idea_votes')
         .delete()
         .eq('idea_id', ideaId)
         .eq('user_id', user.id)
     } else {
-      // Update vote
+      // Aggiorna il voto
       await supabase
         .from('idea_votes')
         .update({ vote: voteType })
@@ -62,7 +62,7 @@ export async function voteIdea(ideaId: string, groupId: string, voteType: string
         .eq('user_id', user.id)
     }
   } else {
-    // Insert new vote
+    // Inserisce nuovo voto
     await supabase
       .from('idea_votes')
       .insert({
@@ -72,10 +72,10 @@ export async function voteIdea(ideaId: string, groupId: string, voteType: string
       })
   }
 
-  revalidatePath(`/groups/${groupId}`)
+  revalidatePath('/ideas')
 }
 
-export async function updateIdeaStatus(ideaId: string, groupId: string, status: string) {
+export async function updateIdeaStatus(ideaId: string, status: string) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non autenticato' }
@@ -87,5 +87,5 @@ export async function updateIdeaStatus(ideaId: string, groupId: string, status: 
 
   if (error) return { error: 'Errore aggiornamento stato' }
   
-  revalidatePath(`/groups/${groupId}`)
+  revalidatePath('/ideas')
 }

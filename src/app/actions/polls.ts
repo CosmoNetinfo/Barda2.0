@@ -8,88 +8,113 @@ export async function createPoll(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non autenticato' }
 
-  const groupId = formData.get('groupId') as string
   const question = formData.get('question') as string
-  const type = formData.get('type') as string // 'single' o 'multi'
-  const optionsString = formData.get('options') as string
+  const type = formData.get('type') as string
+  const expiresAt = formData.get('expires_at') as string
+  const optionsRaw = formData.get('options') as string
 
-  if (!question || !optionsString) return { error: 'Domanda e opzioni sono obbligatorie' }
+  if (!question || question.trim() === '') {
+    return { error: 'La domanda è obbligatoria' }
+  }
 
-  const options = optionsString.split(',').map(o => o.trim()).filter(o => o.length > 0)
-  if (options.length < 2) return { error: 'Inserisci almeno 2 opzioni separate da virgola' }
+  let options: string[] = []
+  try {
+    options = JSON.parse(optionsRaw)
+  } catch (e) {
+    return { error: 'Opzioni non valide' }
+  }
 
-  // Create Poll
-  const { data: poll, error: pollError } = await supabase.from('polls').insert({
-    group_id: groupId,
-    author_id: user.id,
-    question,
-    type: type || 'single',
-  }).select().single()
+  if (options.length < 2) {
+    return { error: 'Inserisci almeno 2 opzioni' }
+  }
 
-  if (pollError || !poll) return { error: 'Errore creazione sondaggio' }
+  // Creazione poll
+  const { data: poll, error: pollError } = await supabase
+    .from('polls')
+    .insert({
+      author_id: user.id,
+      question,
+      type: type || 'single',
+      expires_at: expiresAt || null
+    })
+    .select('id')
+    .single()
 
-  // Create Options
-  const pollOptions = options.map(label => ({
+  if (pollError || !poll) {
+    return { error: 'Errore durante la creazione del sondaggio' }
+  }
+
+  // Creazione opzioni
+  const optionsToInsert = options.map(opt => ({
     poll_id: poll.id,
-    label
+    label: opt
   }))
 
-  const { error: optionsError } = await supabase.from('poll_options').insert(pollOptions)
-  
-  if (optionsError) return { error: 'Errore creazione opzioni del sondaggio' }
+  const { error: optionsError } = await supabase
+    .from('poll_options')
+    .insert(optionsToInsert)
 
-  revalidatePath(`/groups/${groupId}`)
+  if (optionsError) {
+    return { error: 'Errore inserimento opzioni' }
+  }
+
+  revalidatePath('/polls')
   return { success: true }
 }
 
-export async function votePoll(pollId: string, optionId: string, groupId: string, isMulti: boolean) {
+export async function votePoll(pollId: string, optionId: string, isMulti: boolean) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non autenticato' }
 
+  // Se è a risposta singola, rimuovi i vecchi voti di questo utente per questo sondaggio
   if (!isMulti) {
-    // Single choice: delete previous votes of this user for this poll
-    // First, find all options for this poll
-    const { data: pollOptions } = await supabase
+    // Prima troviamo le opzioni del sondaggio
+    const { data: options } = await supabase
       .from('poll_options')
       .select('id')
       .eq('poll_id', pollId)
 
-    if (pollOptions) {
-      const optionIds = pollOptions.map(o => o.id)
+    if (options) {
+      const optionIds = options.map(o => o.id)
       await supabase
         .from('poll_votes')
         .delete()
-        .in('option_id', optionIds)
         .eq('user_id', user.id)
+        .in('option_id', optionIds)
+    }
+  } else {
+    // Se è multi, controlla se ha già votato questa opzione (per fare toggle)
+    const { data: existingVote } = await supabase
+      .from('poll_votes')
+      .select('option_id')
+      .eq('option_id', optionId)
+      .eq('user_id', user.id)
+      .single()
+
+    if (existingVote) {
+      await supabase
+        .from('poll_votes')
+        .delete()
+        .eq('option_id', optionId)
+        .eq('user_id', user.id)
+      
+      revalidatePath('/polls')
+      return { success: true }
     }
   }
 
-  // Check if vote already exists for this specific option
-  const { data: existingVote } = await supabase
+  // Inserisci nuovo voto
+  const { error } = await supabase
     .from('poll_votes')
-    .select('*')
-    .eq('option_id', optionId)
-    .eq('user_id', user.id)
-    .single()
+    .insert({
+      poll_id: pollId,
+      option_id: optionId,
+      user_id: user.id
+    })
 
-  if (existingVote) {
-    // Toggle vote (remove if already voted this option)
-    await supabase
-      .from('poll_votes')
-      .delete()
-      .eq('option_id', optionId)
-      .eq('user_id', user.id)
-  } else {
-    // Insert new vote
-    await supabase
-      .from('poll_votes')
-      .insert({
-        poll_id: pollId,
-        option_id: optionId,
-        user_id: user.id
-      })
-  }
+  if (error) return { error: 'Errore durante il voto' }
 
-  revalidatePath(`/groups/${groupId}`)
+  revalidatePath('/polls')
+  return { success: true }
 }

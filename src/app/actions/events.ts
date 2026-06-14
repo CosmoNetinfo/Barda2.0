@@ -8,7 +8,6 @@ export async function createEvent(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non autenticato' }
 
-  const groupId = formData.get('groupId') as string
   const title = formData.get('title') as string
   const description = formData.get('description') as string
   const location = formData.get('location') as string
@@ -20,7 +19,6 @@ export async function createEvent(formData: FormData) {
   }
 
   const { error } = await supabase.from('events').insert({
-    group_id: groupId,
     author_id: user.id,
     title,
     description: description || null,
@@ -33,41 +31,30 @@ export async function createEvent(formData: FormData) {
     return { error: 'Errore durante la creazione dell\'evento' }
   }
 
-  revalidatePath(`/groups/${groupId}`)
+  revalidatePath('/events')
   return { success: true }
 }
 
-export async function rsvpEvent(eventId: string, groupId: string, status: string) {
+export async function rsvpEvent(eventId: string, status: 'yes' | 'no' | 'maybe') {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non autenticato' }
 
-  // Check if RSVP exists
-  const { data: existingRsvp } = await supabase
+  // Controlla rsvp esistente
+  const { data: existing } = await supabase
     .from('event_rsvp')
     .select('status')
     .eq('event_id', eventId)
     .eq('user_id', user.id)
     .single()
 
-  if (existingRsvp) {
-    if (existingRsvp.status === status) {
-      // Remove RSVP if clicking the same one
-      await supabase
-        .from('event_rsvp')
-        .delete()
-        .eq('event_id', eventId)
-        .eq('user_id', user.id)
-    } else {
-      // Update RSVP
-      await supabase
-        .from('event_rsvp')
-        .update({ status })
-        .eq('event_id', eventId)
-        .eq('user_id', user.id)
-    }
+  if (existing) {
+    await supabase
+      .from('event_rsvp')
+      .update({ status })
+      .eq('event_id', eventId)
+      .eq('user_id', user.id)
   } else {
-    // Insert new RSVP
     await supabase
       .from('event_rsvp')
       .insert({
@@ -77,5 +64,6 @@ export async function rsvpEvent(eventId: string, groupId: string, status: string
       })
   }
 
-  revalidatePath(`/groups/${groupId}`)
+  revalidatePath('/events')
+  revalidatePath('/') // Aggiorna anche la dashboard
 }
