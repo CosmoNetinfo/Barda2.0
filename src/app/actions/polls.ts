@@ -41,7 +41,7 @@ export async function createPoll(formData: FormData) {
     .single()
 
   if (pollError || !poll) {
-    return { error: 'Errore durante la creazione del sondaggio' }
+    return { error: `Errore durante la creazione del sondaggio: ${pollError?.message || 'Risposta vuota'}` }
   }
 
   // Creazione opzioni
@@ -55,7 +55,7 @@ export async function createPoll(formData: FormData) {
     .insert(optionsToInsert)
 
   if (optionsError) {
-    return { error: 'Errore inserimento opzioni' }
+    return { error: `Errore inserimento opzioni: ${optionsError.message}` }
   }
 
   revalidatePath('/polls')
