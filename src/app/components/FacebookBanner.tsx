@@ -1,7 +1,23 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Facebook, X } from 'lucide-react'
+import { X } from 'lucide-react'
+
+// SVG Icona Facebook per evitare errori di importazione da librerie vecchie
+function FacebookIcon({ size = 24, className = '' }: { size?: number, className?: string }) {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width={size} 
+      height={size} 
+      viewBox="0 0 24 24" 
+      fill="currentColor" 
+      className={className}
+    >
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+    </svg>
+  )
+}
 
 export default function FacebookBanner() {
   const [isVisible, setIsVisible] = useState(false)
@@ -31,11 +47,11 @@ export default function FacebookBanner() {
   return (
     <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-4 sm:p-6 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden mb-8">
       {/* Background decoration */}
-      <Facebook size={120} className="absolute -right-6 -bottom-6 text-white opacity-10 pointer-events-none" />
+      <FacebookIcon size={120} className="absolute -right-6 -bottom-6 text-white opacity-10 pointer-events-none" />
       
       <div className="flex items-center gap-4 relative z-10 w-full">
         <div className="bg-white p-3 rounded-full shrink-0 shadow-sm hidden sm:block">
-          <Facebook className="text-blue-600" size={24} />
+          <FacebookIcon className="text-blue-600" size={24} />
         </div>
         <div className="flex-1">
           <div className="flex justify-between items-start">
