@@ -30,16 +30,16 @@ export default function TaskForm({ profiles }: { profiles: any[] }) {
 
   return (
     <>
-      {/* Overlay Mobile */}
+      {/* Overlay */}
       {isOpen && (
         <div 
-          className="md:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
+          className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Form Container */}
-      <div className={`fixed inset-x-0 bottom-0 z-50 md:relative md:inset-auto md:z-10 bg-white md:bg-white/80 md:backdrop-blur-xl rounded-t-3xl md:rounded-3xl shadow-2xl md:shadow-xl border-t md:border border-gray-200 md:border-white/50 overflow-hidden transform transition-transform duration-300 md:translate-y-0 ${isOpen ? 'translate-y-0' : 'translate-y-full md:hidden'}`}>
+      <div className={`fixed inset-x-0 bottom-0 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-50 bg-white md:rounded-3xl rounded-t-3xl shadow-2xl border-t md:border border-gray-100 overflow-hidden transform transition-all duration-300 md:w-[450px] md:max-h-[90vh] flex flex-col ${isOpen ? 'translate-y-0 md:scale-100 opacity-100' : 'translate-y-full md:translate-y-1/2 md:scale-95 opacity-0 pointer-events-none'}`}>
         {/* Handle for Mobile Bottom Sheet */}
         <div className="md:hidden w-full flex justify-center py-2 bg-white">
           <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
