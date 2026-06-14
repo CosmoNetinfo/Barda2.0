@@ -86,7 +86,7 @@ export default async function ProfilePage() {
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
             <h3 className="font-bold text-gray-800 mb-4 font-barlow uppercase text-xl">Account</h3>
             <div className="space-y-3">
-              {profile?.role === 'admin' && (
+              {(profile?.role === 'admin' || profile?.role === 'founder') && (
                 <Link href="/admin" className="w-full flex justify-center bg-gray-900 hover:bg-black text-white font-bold py-3 rounded-xl transition-colors">
                   Pannello Admin
                 </Link>
