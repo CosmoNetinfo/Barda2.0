@@ -1,13 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { Home, Lightbulb, CheckSquare, Calendar, Menu, BarChart2, MapPin, Users, User, X } from 'lucide-react'
 import { useState } from 'react'
 
 export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
   const pathname = usePathname()
-  const router = useRouter()
   const [isMoreOpen, setIsMoreOpen] = useState(false)
 
   const handleClose = () => {
