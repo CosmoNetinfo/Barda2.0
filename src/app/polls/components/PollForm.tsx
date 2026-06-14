@@ -114,7 +114,7 @@ export default function PollForm() {
             onClick={addOption}
             className="mt-3 text-violet-600 font-semibold text-sm hover:underline"
           >
-            + Aggiungi un'altra opzione
+            + Aggiungi un&apos;altra opzione
           </button>
         </div>
 

@@ -39,7 +39,7 @@ export async function updatePlaceStatus(placeId: string, status: string, rating?
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non autenticato' }
 
-  const updateData: any = { status }
+  const updateData: Record<string, string | number> = { status }
   if (status === 'visitato') {
     updateData.visited_at = new Date().toISOString()
   }

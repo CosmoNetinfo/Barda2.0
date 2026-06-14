@@ -1,9 +1,10 @@
 'use client'
 
 import { updatePlaceStatus } from '@/app/actions/places'
-import { MapPin, Navigation, CheckCircle, ExternalLink, Star } from 'lucide-react'
+import { MapPin, Navigation, CheckCircle, Star } from 'lucide-react'
 import { useTransition } from 'react'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function PlaceItem({ place }: { place: any }) {
   const [isPending, startTransition] = useTransition()
 

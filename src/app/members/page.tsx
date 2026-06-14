@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { Users, Mail } from 'lucide-react'
+import { Users } from 'lucide-react'
 
 export default async function MembersPage() {
   const supabase = createClient()

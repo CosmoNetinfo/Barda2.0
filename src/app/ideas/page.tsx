@@ -13,7 +13,7 @@ export default async function IdeasPage() {
   }
 
   // Fetch ideas with author profiles
-  const { data: ideas, error } = await supabase
+  const { data: ideas } = await supabase
     .from('ideas')
     .select(`
       *,

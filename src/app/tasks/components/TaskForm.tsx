@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createTask } from '@/app/actions/tasks'
 import { PlusCircle, Loader2, Calendar } from 'lucide-react'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function TaskForm({ profiles }: { profiles: any[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -35,7 +36,7 @@ export default function TaskForm({ profiles }: { profiles: any[] }) {
       </div>
       <form action={handleSubmit} className="p-6 space-y-5">
         <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Cosa c'è da fare?</label>
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Cosa c&apos;è da fare?</label>
           <input 
             type="text" 
             name="title" 

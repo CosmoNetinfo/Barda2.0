@@ -19,7 +19,7 @@ export default async function TasksPage() {
     .order('name')
 
   // Fetch tasks with assignees
-  const { data: tasks, error } = await supabase
+  const { data: tasks } = await supabase
     .from('tasks')
     .select(`
       *,

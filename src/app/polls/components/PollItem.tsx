@@ -3,6 +3,7 @@
 import { votePoll } from '@/app/actions/polls'
 import { useTransition } from 'react'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function PollItem({ poll, options, votes, currentUserId }: { poll: any, options: any[], votes: any[], currentUserId: string }) {
   const [isPending, startTransition] = useTransition()
 

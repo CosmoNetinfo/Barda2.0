@@ -4,6 +4,7 @@ import { updateTaskStatus } from '@/app/actions/tasks'
 import { Check, Clock, PlayCircle } from 'lucide-react'
 import { useTransition } from 'react'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function TaskItem({ task }: { task: any }) {
   const [isPending, startTransition] = useTransition()
 

@@ -50,7 +50,7 @@ export default async function PollsPage() {
         <div className="text-center py-20 text-gray-500 bg-white/50 backdrop-blur-sm rounded-3xl border border-dashed border-gray-300">
           <BarChart2 size={48} className="mx-auto text-gray-300 mb-4" />
           <h3 className="text-lg font-bold text-gray-700">Nessun sondaggio attivo</h3>
-          <p className="mt-1">Crea il primo sondaggio per chiedere l'opinione del gruppo.</p>
+          <p className="mt-1">Crea il primo sondaggio per chiedere l&apos;opinione del gruppo.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

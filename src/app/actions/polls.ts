@@ -20,7 +20,7 @@ export async function createPoll(formData: FormData) {
   let options: string[] = []
   try {
     options = JSON.parse(optionsRaw)
-  } catch (e) {
+  } catch {
     return { error: 'Opzioni non valide' }
   }
 
