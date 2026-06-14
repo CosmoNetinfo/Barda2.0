@@ -100,11 +100,11 @@ export default async function MembersPage() {
                 
                 {isAdmin && !isMe ? (
                   <div className="mb-4">
-                    <RoleEditor userId={profile.id} initialRole={profile.role || 'ospite'} />
+                    <RoleEditor userId={profile.id} initialRole={profile.role || 'membro'} />
                   </div>
                 ) : (
                   <span className="text-xs font-bold uppercase tracking-wider bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full mb-4 inline-block">
-                    {profile.role || 'ospite'}
+                    {profile.role || 'membro'}
                   </span>
                 )}
 

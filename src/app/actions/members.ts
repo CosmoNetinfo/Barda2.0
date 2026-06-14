@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { revalidatePath } from 'next/cache'
 
 export async function updateMemberRole(userId: string, newRole: string) {
@@ -9,7 +10,7 @@ export async function updateMemberRole(userId: string, newRole: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Non autorizzato')
 
-  // Check se chi chiama è admin
+  // Check se chi chiama è admin/founder (usa client normale per leggere)
   const { data: callerProfile } = await supabase
     .from('profiles')
     .select('role')
@@ -31,8 +32,9 @@ export async function updateMemberRole(userId: string, newRole: string) {
     throw new Error('Solo un Founder può nominare un altro Founder.')
   }
 
-  // Esegui l'update
-  const { error } = await supabase
+  // Usa il client admin (service role) per bypassare RLS sull'update
+  const adminClient = createAdminClient()
+  const { error } = await adminClient
     .from('profiles')
     .update({ role: newRole })
     .eq('id', userId)

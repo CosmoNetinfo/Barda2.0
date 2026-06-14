@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react'
 
 export default function RoleEditor({ userId, initialRole }: { userId: string, initialRole: string }) {
   const [isPending, startTransition] = useTransition()
-  const [role, setRole] = useState(initialRole || 'ospite')
+  const [role, setRole] = useState(initialRole || 'membro')
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newRole = e.target.value
@@ -24,10 +24,10 @@ export default function RoleEditor({ userId, initialRole }: { userId: string, in
         disabled={isPending}
         className="appearance-none bg-gray-100 text-gray-700 font-medium text-xs rounded-full px-3 py-1 pr-8 border border-transparent hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
       >
-        <option value="admin">Admin</option>
-        <option value="redattore">Redattore</option>
-        <option value="user">User</option>
-        <option value="ospite">Ospite</option>
+        <option value="founder" disabled>👑 Founder</option>
+        <option value="admin">🛡️ Admin</option>
+        <option value="redattore">✏️ Redattore</option>
+        <option value="membro">👤 Membro</option>
       </select>
       {/* Freccia custom per select */}
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
