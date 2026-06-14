@@ -28,9 +28,20 @@ export async function login(formData: FormData) {
 export async function signup(formData: FormData) {
   const supabase = createClient()
 
+  const name = formData.get('name') as string
+  if (!name || name.trim() === '') {
+    redirect(`/login?message=${encodeURIComponent('Il Nome e Cognome è obbligatorio per la registrazione via email.')}`)
+  }
+
   const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
+    options: {
+      data: {
+        name: name.trim(),
+        full_name: name.trim()
+      }
+    }
   }
 
   const { data: authData, error } = await supabase.auth.signUp(data)

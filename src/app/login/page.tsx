@@ -18,6 +18,16 @@ export default function LoginPage({ searchParams }: { searchParams: { message: s
         )}
         <form className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
+            <label htmlFor="name" className="text-sm font-medium">Nome e Cognome (solo per registrazione)</label>
+            <input 
+              id="name" 
+              name="name" 
+              type="text" 
+              className="rounded-md border p-2 text-sm"
+              placeholder="Mario Rossi"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
             <label htmlFor="email" className="text-sm font-medium">Email</label>
             <input 
               id="email" 
@@ -97,7 +107,7 @@ export default function LoginPage({ searchParams }: { searchParams: { message: s
                 Registrazione con Email
               </h3>
               <ol className="text-sm text-gray-500 space-y-2 list-decimal pl-5">
-                <li>Inserisci la tua Email e scegli una Password in alto</li>
+                <li>Inserisci <strong>Nome e Cognome</strong>, Email e scegli una Password</li>
                 <li>Clicca su &quot;Registrati&quot;</li>
                 <li>Controlla la tua casella email per il link di conferma</li>
               </ol>
