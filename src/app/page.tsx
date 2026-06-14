@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import GroupActions from './components/GroupActions'
 
@@ -45,13 +46,13 @@ export default async function Home() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {groups?.map((group) => (
-            <div key={group.id} className="rounded-lg border bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-              <h3 className="font-semibold text-lg">{group.name}</h3>
+            <Link href={`/groups/${group.id}`} key={group.id} className="rounded-lg border bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
+              <h3 className="font-semibold text-lg text-black">{group.name}</h3>
               {group.description && <p className="text-sm text-gray-500 mt-1">{group.description}</p>}
               <div className="mt-4 flex items-center justify-between text-xs text-gray-400">
                 <span>Codice: {group.invite_code}</span>
               </div>
-            </div>
+            </Link>
           ))}
 
           {(!groups || groups.length === 0) && !error && (
