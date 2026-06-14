@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { removeMember, updateIdeaStatus, deleteIdea, deleteTask, deleteEvent, toggleEventPin } from '@/app/actions/admin'
+import { updateMemberRole } from '@/app/actions/members'
 import { Trash2, Pin } from 'lucide-react'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,7 +47,17 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
               {members.map((m: { id: string; name: string; role?: string }) => (
                 <tr key={m.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                   <td className="p-3 font-bold">{m.name}</td>
-                  <td className="p-3 text-sm">{m.role || 'Ospite'}</td>
+                  <td className="p-3 text-sm">
+                    <select 
+                      value={m.role || 'user'} 
+                      onChange={(e) => handleAction(() => updateMemberRole(m.id, e.target.value))}
+                      className="bg-gray-100 rounded px-2 py-1 text-sm font-medium"
+                    >
+                      <option value="user">Ospite / Utente</option>
+                      <option value="redattore">Redattore</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </td>
                   <td className="p-3">
                     <button onClick={() => handleAction(() => removeMember(m.id))} className="text-red-500 hover:text-red-700 p-2 rounded-lg bg-red-50 hover:bg-red-100 transition-colors">
                       <Trash2 size={18} />
