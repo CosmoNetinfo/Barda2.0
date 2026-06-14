@@ -34,7 +34,7 @@ export async function logAdminAction(action: string, entityType: string, entityI
 
 export async function removeMember(userId: string) {
   const supabase = createClient()
-  const { profile: callerProfile } = await checkAdmin(supabase)
+  await checkAdmin(supabase)
 
   const { data: targetProfile } = await supabase.from('profiles').select('role').eq('id', userId).single()
   if (targetProfile?.role === 'founder') {
