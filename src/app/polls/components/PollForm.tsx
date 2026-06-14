@@ -27,8 +27,14 @@ export default function PollForm() {
     setLoading(true)
     const validOptions = options.filter(o => o.trim() !== '')
     formData.append('options', JSON.stringify(validOptions))
-    await createPoll(formData)
+    const res = await createPoll(formData)
     setLoading(false)
+    
+    if (res?.error) {
+      alert("ERRORE: " + res.error)
+      return
+    }
+    
     setIsOpen(false)
     setOptions(['', ''])
   }
@@ -56,7 +62,7 @@ export default function PollForm() {
       )}
 
       {/* Form Container */}
-      <div className={`fixed inset-x-0 bottom-0 z-50 md:relative md:inset-auto md:z-10 bg-white md:rounded-3xl rounded-t-3xl shadow-2xl border-t md:border border-gray-100 overflow-hidden transform transition-transform duration-300 md:translate-y-0 ${isOpen ? 'translate-y-0' : 'translate-y-full md:hidden'}`}>
+      <div className={`fixed inset-x-0 bottom-0 z-50 md:absolute md:inset-auto md:right-0 md:top-full md:mt-2 md:w-[450px] md:z-10 bg-white md:rounded-3xl rounded-t-3xl shadow-2xl border-t md:border border-gray-100 overflow-hidden transform transition-all duration-300 ${isOpen ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-full md:translate-y-0 md:opacity-0 md:scale-95 pointer-events-none'}`}>
         {/* Handle for Mobile Bottom Sheet */}
         <div className="md:hidden w-full flex justify-center py-2 bg-violet-50/80">
           <div className="w-12 h-1.5 bg-violet-200 rounded-full"></div>
@@ -64,7 +70,7 @@ export default function PollForm() {
 
         <div className="bg-violet-50/80 p-5 flex justify-between items-center border-b border-violet-100">
           <h3 className="font-bold text-violet-900 text-lg">Nuovo Sondaggio</h3>
-          <button onClick={() => setIsOpen(false)} className="text-violet-600 hover:text-violet-800 text-sm font-semibold transition-colors">Annulla</button>
+          <button type="button" onClick={() => setIsOpen(false)} className="text-violet-600 hover:text-violet-800 text-sm font-semibold transition-colors">Annulla</button>
         </div>
         <form action={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto pb-safe">
           <div>
@@ -78,24 +84,24 @@ export default function PollForm() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tipo di voto</label>
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Tipo di voto</label>
               <select 
                 name="type"
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-medium text-gray-700 appearance-none"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-medium text-gray-700 appearance-none text-sm"
               >
                 <option value="single">Scelta Singola</option>
-                <option value="multi">Scelta Multipla (Doodle style)</option>
+                <option value="multi">Scelta Multipla</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Scadenza (opzionale)</label>
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Scadenza (opz.)</label>
               <input 
                 type="date" 
                 name="expires_at"
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-medium text-gray-700"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-medium text-gray-700 text-sm"
               />
             </div>
           </div>
