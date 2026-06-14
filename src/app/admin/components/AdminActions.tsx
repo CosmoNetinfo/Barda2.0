@@ -56,6 +56,7 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
                       <option value="user">Ospite / Utente</option>
                       <option value="redattore">Redattore</option>
                       <option value="admin">Admin</option>
+                      <option value="founder">Founder</option>
                     </select>
                   </td>
                   <td className="p-3">

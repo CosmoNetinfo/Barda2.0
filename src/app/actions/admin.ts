@@ -14,15 +14,15 @@ async function checkAdmin(supabase: any) {
     .eq('id', user.id)
     .single()
 
-  if (profile?.role !== 'admin') {
+  if (profile?.role !== 'admin' && profile?.role !== 'founder') {
     throw new Error('Forbidden')
   }
-  return user
+  return { user, profile }
 }
 
 export async function logAdminAction(action: string, entityType: string, entityId?: string) {
   const supabase = createClient()
-  const user = await checkAdmin(supabase)
+  const { user } = await checkAdmin(supabase)
 
   await supabase.from('activity_log').insert({
     user_id: user.id,
@@ -34,7 +34,12 @@ export async function logAdminAction(action: string, entityType: string, entityI
 
 export async function removeMember(userId: string) {
   const supabase = createClient()
-  await checkAdmin(supabase)
+  const { profile: callerProfile } = await checkAdmin(supabase)
+
+  const { data: targetProfile } = await supabase.from('profiles').select('role').eq('id', userId).single()
+  if (targetProfile?.role === 'founder') {
+    throw new Error('Il Founder non può essere rimosso.')
+  }
 
   await supabase.auth.admin.deleteUser(userId)
   // Fallback: if we don't have service role for auth.admin.deleteUser, 

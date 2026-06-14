@@ -16,8 +16,19 @@ export async function updateMemberRole(userId: string, newRole: string) {
     .eq('id', user.id)
     .single()
 
-  if (callerProfile?.role !== 'admin') {
+  if (callerProfile?.role !== 'admin' && callerProfile?.role !== 'founder') {
     throw new Error('Solo gli admin possono modificare i ruoli')
+  }
+
+  // Controlla se il target è founder o se il nuovo ruolo è founder
+  const { data: targetProfile } = await supabase.from('profiles').select('role').eq('id', userId).single()
+
+  if (targetProfile?.role === 'founder' && callerProfile?.role !== 'founder') {
+    throw new Error('Un admin non può modificare il ruolo del Founder.')
+  }
+
+  if (newRole === 'founder' && callerProfile?.role !== 'founder') {
+    throw new Error('Solo un Founder può nominare un altro Founder.')
   }
 
   // Esegui l'update
