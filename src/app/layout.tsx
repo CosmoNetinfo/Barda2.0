@@ -46,6 +46,9 @@ export default async function RootLayout({
   return (
     <html lang="it">
       <body className={`${inter.variable} ${barlowCondensed.variable} font-sans antialiased bg-gray-50 pb-20 md:pb-0 md:pl-64`}>
+        {/* Barra decorativa in alto */}
+        <div className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-rose-500 to-orange-500 z-[100]" />
+        
         {/* Sidebar Desktop */}
         <aside className="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-white border-r border-gray-200 z-50">
           <div className="p-6 flex items-center gap-3">
