@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const sizes = [16, 32, 48, 72, 96, 128, 144, 152, 192, 384, 512];
-const inputFile = path.join(__dirname, '../public/bardasci-logo.svg');
+const inputFile = path.join(__dirname, '../public/bardasci-logo.png');
 const outputDir = path.join(__dirname, '../public/icons');
 
 if (!fs.existsSync(outputDir)) {
