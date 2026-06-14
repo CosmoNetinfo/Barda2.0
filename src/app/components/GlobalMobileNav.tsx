@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Home, Lightbulb, CheckSquare, Calendar, Menu, BarChart2, MapPin, Users, User, X } from 'lucide-react'
 import { useState } from 'react'
 
@@ -78,12 +78,19 @@ function NavItem({ href, icon, label, active }: { href: string; icon: React.Reac
 }
 
 function MoreItem({ href, icon, label, onClick }: { href: string, icon: React.ReactNode, label: string, onClick: () => void }) {
+  const router = useRouter()
   return (
-    <Link href={href} onClick={onClick} className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 active:scale-95 transition-all">
+    <button 
+      onClick={() => { 
+        onClick();
+        router.push(href);
+      }} 
+      className="flex w-full flex-col items-center gap-3 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 active:scale-95 transition-all"
+    >
       <div className="bg-white p-3 rounded-full shadow-sm">
         {icon}
       </div>
       <span className="font-bold text-sm text-gray-700">{label}</span>
-    </Link>
+    </button>
   )
 }

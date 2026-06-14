@@ -1,6 +1,6 @@
 import { login, signup, signInWithGoogle } from './actions'
 
-export default function LoginPage() {
+export default function LoginPage({ searchParams }: { searchParams: { message: string } }) {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-sm rounded-3xl border border-gray-100 bg-white p-8 shadow-xl text-black">
@@ -9,6 +9,12 @@ export default function LoginPage() {
           <h1 className="text-3xl font-extrabold font-barlow text-primary uppercase tracking-tight">I Bardasci</h1>
           <p className="text-gray-500 font-medium text-sm mt-1">Accedi all&apos;app per continuare</p>
         </div>
+        
+        {searchParams?.message && (
+          <div className="mb-6 p-4 bg-amber-50 text-amber-800 border border-amber-200 rounded-xl text-sm font-medium text-center">
+            {searchParams.message}
+          </div>
+        )}
         <form className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <label htmlFor="email" className="text-sm font-medium">Email</label>

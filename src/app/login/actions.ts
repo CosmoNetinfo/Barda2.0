@@ -18,7 +18,7 @@ export async function login(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    redirect('/login?message=Could not authenticate user')
+    redirect(`/login?message=${encodeURIComponent(error.message || 'Credenziali non valide')}`)
   }
 
   revalidatePath('/', 'layout')
@@ -33,10 +33,14 @@ export async function signup(formData: FormData) {
     password: formData.get('password') as string,
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  const { data: authData, error } = await supabase.auth.signUp(data)
 
   if (error) {
-    redirect('/login?message=Could not authenticate user')
+    redirect(`/login?message=${encodeURIComponent(error.message)}`)
+  }
+
+  if (!authData.session) {
+    redirect(`/login?message=${encodeURIComponent('Controlla la tua email per confermare la registrazione!')}`)
   }
 
   revalidatePath('/', 'layout')
