@@ -22,10 +22,10 @@ export async function createIdea(formData: FormData) {
     description: description || null,
     category: category || 'articolo',
     status: 'proposta'
-  })
+  }).select().single()
 
-  if (error) {
-    return { error: 'Errore durante la creazione dell\'idea' }
+  if (error || !idea) {
+    return { error: `Errore durante la creazione dell'idea: ${error?.message || 'Risposta vuota'}` }
   }
 
   revalidatePath('/ideas')

@@ -25,10 +25,10 @@ export async function createEvent(formData: FormData) {
     location: location || null,
     date,
     time: time || null
-  })
+  }).select().single()
 
-  if (error) {
-    return { error: 'Errore durante la creazione dell\'evento' }
+  if (error || !event) {
+    return { error: `Errore durante la creazione dell'evento: ${error?.message || 'Risposta vuota'}` }
   }
 
   revalidatePath('/events')

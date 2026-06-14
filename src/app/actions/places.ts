@@ -24,10 +24,10 @@ export async function createPlace(formData: FormData) {
     address: address || null,
     maps_url: maps_url || null,
     status: 'da_provare'
-  })
+  }).select().single()
 
-  if (error) {
-    return { error: 'Errore durante la creazione del luogo' }
+  if (error || !place) {
+    return { error: `Errore durante la creazione del luogo: ${error?.message || 'Risposta vuota'}` }
   }
 
   revalidatePath('/places')
