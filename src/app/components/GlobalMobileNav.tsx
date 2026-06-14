@@ -34,12 +34,12 @@ export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
               </button>
             </div>
             <div className="grid grid-cols-3 gap-4">
-              <MoreItem router={router} href="/polls" icon={<BarChart2 size={28} className="text-violet-500" />} label="Sondaggi" onClose={handleClose} />
-              <MoreItem router={router} href="/places" icon={<MapPin size={28} className="text-emerald-500" />} label="Luoghi" onClose={handleClose} />
-              <MoreItem router={router} href="/members" icon={<Users size={28} className="text-indigo-500" />} label="Membri" onClose={handleClose} />
-              <MoreItem router={router} href="/profile" icon={<User size={28} className="text-blue-500" />} label="Profilo" onClose={handleClose} />
+              <MoreItem href="/polls" icon={<BarChart2 size={28} className="text-violet-500" />} label="Sondaggi" onClose={handleClose} />
+              <MoreItem href="/places" icon={<MapPin size={28} className="text-emerald-500" />} label="Luoghi" onClose={handleClose} />
+              <MoreItem href="/members" icon={<Users size={28} className="text-indigo-500" />} label="Membri" onClose={handleClose} />
+              <MoreItem href="/profile" icon={<User size={28} className="text-blue-500" />} label="Profilo" onClose={handleClose} />
               {role === 'founder' && (
-                <MoreItem router={router} href="/admin/debug" icon={<BarChart2 size={28} className="text-rose-500" />} label="Debug" onClose={handleClose} />
+                <MoreItem href="/admin/debug" icon={<BarChart2 size={28} className="text-rose-500" />} label="Debug" onClose={handleClose} />
               )}
             </div>
           </div>
@@ -88,20 +88,13 @@ function NavItem({ href, icon, label, active }: { href: string; icon: React.Reac
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function MoreItem({ router, href, icon, label, onClose }: { router: any, href: string, icon: React.ReactNode, label: string, onClose: () => void }) {
+function MoreItem({ href, icon, label, onClose }: { href: string, icon: React.ReactNode, label: string, onClose: () => void }) {
   return (
-    <button 
+    <a 
+      href={href}
       onClick={() => {
         console.log(`>>> DEBUG: Click su ${label} (${href})`)
         onClose()
-        // Facciamo un push tramite router, oppure se è bloccato possiamo anche fare window.location.href = href
-        try {
-          router.push(href)
-        } catch (e) {
-          console.error(`>>> DEBUG: Errore durante il push a ${href}:`, e)
-          window.location.href = href
-        }
       }} 
       className="flex w-full flex-col items-center gap-3 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 active:scale-95 transition-all border-none focus:outline-none"
     >
@@ -109,6 +102,6 @@ function MoreItem({ router, href, icon, label, onClose }: { router: any, href: s
         {icon}
       </div>
       <span className="font-bold text-sm text-gray-700 pointer-events-none">{label}</span>
-    </button>
+    </a>
   )
 }
