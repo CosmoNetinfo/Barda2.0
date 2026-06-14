@@ -46,86 +46,102 @@ export default function PollForm() {
   }
 
   return (
-    <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all relative z-10">
-      <div className="bg-violet-50/80 p-5 flex justify-between items-center border-b border-violet-100">
-        <h3 className="font-bold text-violet-900 text-lg">Nuovo Sondaggio</h3>
-        <button onClick={() => setIsOpen(false)} className="text-violet-600 hover:text-violet-800 text-sm font-semibold transition-colors">Annulla</button>
-      </div>
-      <form action={handleSubmit} className="p-6 space-y-5">
-        <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Domanda</label>
-          <input 
-            type="text" 
-            name="question" 
-            required
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all placeholder-gray-400 font-bold text-lg text-gray-900"
-            placeholder="Es. Quando facciamo la prossima riunione?"
-          />
+    <>
+      {/* Overlay Mobile */}
+      {isOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Form Container */}
+      <div className={`fixed inset-x-0 bottom-0 z-50 md:relative md:inset-auto md:z-10 bg-white md:rounded-3xl rounded-t-3xl shadow-2xl border-t md:border border-gray-100 overflow-hidden transform transition-transform duration-300 md:translate-y-0 ${isOpen ? 'translate-y-0' : 'translate-y-full md:hidden'}`}>
+        {/* Handle for Mobile Bottom Sheet */}
+        <div className="md:hidden w-full flex justify-center py-2 bg-violet-50/80">
+          <div className="w-12 h-1.5 bg-violet-200 rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="bg-violet-50/80 p-5 flex justify-between items-center border-b border-violet-100">
+          <h3 className="font-bold text-violet-900 text-lg">Nuovo Sondaggio</h3>
+          <button onClick={() => setIsOpen(false)} className="text-violet-600 hover:text-violet-800 text-sm font-semibold transition-colors">Annulla</button>
+        </div>
+        <form action={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto pb-safe">
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tipo di voto</label>
-            <select 
-              name="type"
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-medium text-gray-700 appearance-none"
-            >
-              <option value="single">Scelta Singola</option>
-              <option value="multi">Scelta Multipla (Doodle style)</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Scadenza (opzionale)</label>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Domanda</label>
             <input 
-              type="date" 
-              name="expires_at"
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-medium text-gray-700"
+              type="text" 
+              name="question" 
+              required
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all placeholder-gray-400 font-bold text-lg text-gray-900"
+              placeholder="Es. Quando facciamo la prossima riunione?"
             />
           </div>
-        </div>
 
-        <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Opzioni</label>
-          <div className="space-y-3">
-            {options.map((option, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <input 
-                  type="text" 
-                  value={option}
-                  onChange={(e) => updateOption(index, e.target.value)}
-                  placeholder={`Opzione ${index + 1}`}
-                  className="flex-1 bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-medium text-gray-700"
-                />
-                {options.length > 2 && (
-                  <button 
-                    type="button" 
-                    onClick={() => removeOption(index)}
-                    className="p-3 text-gray-400 hover:text-red-500 transition-colors"
-                  >
-                    <X size={20} />
-                  </button>
-                )}
-              </div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tipo di voto</label>
+              <select 
+                name="type"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-medium text-gray-700 appearance-none"
+              >
+                <option value="single">Scelta Singola</option>
+                <option value="multi">Scelta Multipla (Doodle style)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Scadenza (opzionale)</label>
+              <input 
+                type="date" 
+                name="expires_at"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-medium text-gray-700"
+              />
+            </div>
           </div>
-          <button 
-            type="button" 
-            onClick={addOption}
-            className="mt-3 text-violet-600 font-semibold text-sm hover:underline"
-          >
-            + Aggiungi un&apos;altra opzione
-          </button>
-        </div>
 
-        <button 
-          type="submit" 
-          disabled={loading || options.filter(o => o.trim() !== '').length < 2}
-          className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-4 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2 disabled:opacity-70"
-        >
-          {loading ? <Loader2 className="animate-spin" size={20} /> : 'Pubblica Sondaggio'}
-        </button>
-      </form>
-    </div>
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Opzioni</label>
+            <div className="space-y-3">
+              {options.map((option, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <input 
+                    type="text" 
+                    value={option}
+                    onChange={(e) => updateOption(index, e.target.value)}
+                    placeholder={`Opzione ${index + 1}`}
+                    className="flex-1 bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-medium text-gray-700"
+                  />
+                  {options.length > 2 && (
+                    <button 
+                      type="button" 
+                      onClick={() => removeOption(index)}
+                      className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <X size={20} />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            <button 
+              type="button" 
+              onClick={addOption}
+              className="mt-3 text-violet-600 font-semibold text-sm hover:underline min-h-[44px] flex items-center"
+            >
+              + Aggiungi un&apos;altra opzione
+            </button>
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={loading || options.filter(o => o.trim() !== '').length < 2}
+            className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold min-h-[44px] py-4 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2 disabled:opacity-70"
+          >
+            {loading ? <Loader2 className="animate-spin" size={20} /> : 'Pubblica Sondaggio'}
+          </button>
+        </form>
+      </div>
+    </>
   )
 }

@@ -15,6 +15,9 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+import GlobalMobileNav from "./components/GlobalMobileNav";
+import GlobalFAB from "./components/GlobalFAB";
+
 export const metadata: Metadata = {
   title: "I Bardasci",
   description: "Webapp collaborativa per il gruppo I Bardasci",
@@ -48,14 +51,8 @@ export default function RootLayout({
           {children}
         </main>
 
-        {/* Bottom Navigation Mobile */}
-        <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 flex justify-around p-2 z-50 pb-safe">
-          <MobileNavItem href="/" icon={<Home size={24} />} label="Home" />
-          <MobileNavItem href="/events" icon={<Calendar size={24} />} label="Eventi" />
-          <MobileNavItem href="/tasks" icon={<CheckSquare size={24} />} label="Task" />
-          <MobileNavItem href="/ideas" icon={<Lightbulb size={24} />} label="Idee" />
-          <MobileNavItem href="/menu" icon={<Users size={24} />} label="Menu" />
-        </nav>
+        <GlobalFAB />
+        <GlobalMobileNav />
       </body>
     </html>
   );
@@ -66,15 +63,6 @@ function NavItem({ href, icon, label }: { href: string; icon: React.ReactNode; l
     <Link href={href} className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-black transition-colors font-medium">
       {icon}
       <span>{label}</span>
-    </Link>
-  );
-}
-
-function MobileNavItem({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
-  return (
-    <Link href={href} className="flex flex-col items-center gap-1 p-2 text-gray-500 hover:text-black">
-      {icon}
-      <span className="text-[10px] font-medium">{label}</span>
     </Link>
   );
 }

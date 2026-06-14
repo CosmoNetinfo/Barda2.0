@@ -28,81 +28,97 @@ export default function EventForm() {
   }
 
   return (
-    <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all relative z-10">
-      <div className="bg-blue-50/80 p-5 flex justify-between items-center border-b border-blue-100">
-        <h3 className="font-bold text-blue-900 text-lg">Nuovo Evento</h3>
-        <button onClick={() => setIsOpen(false)} className="text-blue-600 hover:text-blue-800 text-sm font-semibold transition-colors">Annulla</button>
-      </div>
-      <form action={handleSubmit} className="p-6 space-y-5">
-        <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Titolo Evento</label>
-          <input 
-            type="text" 
-            name="title" 
-            required
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400 font-bold text-lg text-gray-900"
-            placeholder="Es. Cena di Redazione"
-          />
+    <>
+      {/* Overlay Mobile */}
+      {isOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Form Container */}
+      <div className={`fixed inset-x-0 bottom-0 z-50 md:relative md:inset-auto md:z-10 bg-white md:rounded-3xl rounded-t-3xl shadow-2xl border-t md:border border-gray-100 overflow-hidden transform transition-transform duration-300 md:translate-y-0 ${isOpen ? 'translate-y-0' : 'translate-y-full md:hidden'}`}>
+        {/* Handle for Mobile Bottom Sheet */}
+        <div className="md:hidden w-full flex justify-center py-2 bg-blue-50/80">
+          <div className="w-12 h-1.5 bg-blue-200 rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Data</label>
-            <div className="relative">
-              <input 
-                type="date" 
-                name="date"
-                required
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 pl-10 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-gray-700"
-              />
-              <CalendarIcon size={18} className="absolute left-3 top-3.5 text-blue-500" />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Ora</label>
-            <div className="relative">
-              <input 
-                type="time" 
-                name="time"
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 pl-10 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-gray-700"
-              />
-              <Clock size={18} className="absolute left-3 top-3.5 text-blue-500" />
-            </div>
-          </div>
+        <div className="bg-blue-50/80 p-5 flex justify-between items-center border-b border-blue-100">
+          <h3 className="font-bold text-blue-900 text-lg">Nuovo Evento</h3>
+          <button onClick={() => setIsOpen(false)} className="text-blue-600 hover:text-blue-800 text-sm font-semibold transition-colors">Annulla</button>
         </div>
-
-        <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Luogo</label>
-          <div className="relative">
+        <form action={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto pb-safe">
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Titolo Evento</label>
             <input 
               type="text" 
-              name="location" 
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 pl-10 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-gray-400 font-medium text-gray-700"
-              placeholder="Es. Pizzeria del Corso"
+              name="title" 
+              required
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400 font-bold text-lg text-gray-900"
+              placeholder="Es. Cena di Redazione"
             />
-            <MapPin size={18} className="absolute left-3 top-3.5 text-blue-500" />
           </div>
-        </div>
 
-        <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Descrizione (opzionale)</label>
-          <textarea 
-            name="description" 
-            rows={2}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-gray-400 text-gray-700"
-            placeholder="Qualche info in più..."
-          />
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Data</label>
+              <div className="relative">
+                <input 
+                  type="date" 
+                  name="date"
+                  required
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 pl-10 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-gray-700"
+                />
+                <CalendarIcon size={18} className="absolute left-3 top-3.5 text-blue-500" />
+              </div>
+            </div>
 
-        <button 
-          type="submit" 
-          disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2 disabled:opacity-70"
-        >
-          {loading ? <Loader2 className="animate-spin" size={20} /> : 'Conferma Evento'}
-        </button>
-      </form>
-    </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Ora</label>
+              <div className="relative">
+                <input 
+                  type="time" 
+                  name="time"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 pl-10 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-gray-700"
+                />
+                <Clock size={18} className="absolute left-3 top-3.5 text-blue-500" />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Luogo</label>
+            <div className="relative">
+              <input 
+                type="text" 
+                name="location" 
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 pl-10 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-gray-400 font-medium text-gray-700"
+                placeholder="Es. Pizzeria del Corso"
+              />
+              <MapPin size={18} className="absolute left-3 top-3.5 text-blue-500" />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Descrizione (opzionale)</label>
+            <textarea 
+              name="description" 
+              rows={2}
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-gray-400 text-gray-700"
+              placeholder="Qualche info in più..."
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold min-h-[44px] py-4 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2 disabled:opacity-70"
+          >
+            {loading ? <Loader2 className="animate-spin" size={20} /> : 'Conferma Evento'}
+          </button>
+        </form>
+      </div>
+    </>
   )
 }

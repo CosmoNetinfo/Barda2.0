@@ -47,9 +47,9 @@ export default async function Home() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Prossimo Evento */}
-        <section className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm col-span-1 md:col-span-2 flex flex-col justify-between relative overflow-hidden">
+        <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm col-span-1 md:col-span-2 flex flex-col justify-between relative overflow-hidden">
           <div className="absolute top-0 right-0 p-8 opacity-5">
             <Calendar size={120} />
           </div>
@@ -61,29 +61,29 @@ export default async function Home() {
             <h3 className="text-2xl font-bold mb-1">Riunione Redazione</h3>
             <p className="text-gray-600 mb-6">Sabato 20 Giugno • 18:30 • Sede</p>
           </div>
-          <div className="flex gap-2">
-            <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-indigo-700 transition">Ci sarò</button>
-            <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium text-sm hover:bg-gray-200 transition">Non posso</button>
+          <div className="flex flex-col sm:flex-row gap-3 relative z-10">
+            <button className="flex-1 bg-indigo-600 text-white min-h-[48px] rounded-xl font-bold hover:bg-indigo-700 transition-colors flex justify-center items-center shadow-md">Ci sarò</button>
+            <button className="flex-1 bg-gray-100 text-gray-700 min-h-[48px] rounded-xl font-bold hover:bg-gray-200 transition-colors flex justify-center items-center">Non posso</button>
           </div>
         </section>
 
         {/* Task Assegnati */}
-        <section className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+        <section className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col">
           <div className="flex items-center gap-2 text-rose-500 mb-4">
             <CheckSquare size={20} />
             <h2 className="font-semibold text-sm uppercase tracking-wider">I Miei Task</h2>
           </div>
-          <ul className="space-y-3 flex-1">
-            <li className="flex gap-3 items-start">
-              <input type="checkbox" className="mt-1 rounded border-gray-300 text-rose-500 focus:ring-rose-500" />
-              <span className="text-sm">Scrivere bozza articolo su Spoleto</span>
+          <ul className="space-y-1 flex-1">
+            <li className="flex gap-3 items-center min-h-[44px] hover:bg-gray-50 rounded-lg -mx-2 px-2 transition-colors">
+              <input type="checkbox" className="w-5 h-5 rounded border-gray-300 text-rose-500 focus:ring-rose-500" />
+              <span className="text-sm font-medium">Scrivere bozza articolo su Spoleto</span>
             </li>
-            <li className="flex gap-3 items-start">
-              <input type="checkbox" className="mt-1 rounded border-gray-300 text-rose-500 focus:ring-rose-500" />
-              <span className="text-sm">Montaggio video intervista</span>
+            <li className="flex gap-3 items-center min-h-[44px] hover:bg-gray-50 rounded-lg -mx-2 px-2 transition-colors">
+              <input type="checkbox" className="w-5 h-5 rounded border-gray-300 text-rose-500 focus:ring-rose-500" />
+              <span className="text-sm font-medium">Montaggio video intervista</span>
             </li>
           </ul>
-          <Link href="/tasks" className="text-sm text-rose-500 font-medium hover:underline mt-4">Vedi tutti →</Link>
+          <Link href="/tasks" className="text-sm text-rose-500 font-bold hover:underline mt-4 min-h-[44px] flex items-center">Vedi tutti i task →</Link>
         </section>
       </div>
 
