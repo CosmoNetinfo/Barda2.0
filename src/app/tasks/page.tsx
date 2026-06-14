@@ -18,16 +18,16 @@ export default async function TasksPage() {
     .select('id, name, avatar_url')
     .order('name')
 
-  // Fetch tasks with assignees
-  const { data: tasks } = await supabase
+  // Fetch tasks
+  const { data: tasks, error: tasksError } = await supabase
     .from('tasks')
-    .select(`
-      *,
-      task_assignees (
-        profiles (id, name, avatar_url)
-      )
-    `)
+    .select('*')
     .order('created_at', { ascending: false })
+
+  // Debug: log if tasks query fails
+  if (tasksError) {
+    console.error('Tasks fetch error:', tasksError.message)
+  }
 
   const todoTasks = tasks?.filter(t => t.status === 'todo') || []
   const inProgressTasks = tasks?.filter(t => t.status === 'in_progress') || []
