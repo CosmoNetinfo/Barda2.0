@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { Calendar, CheckSquare, Lightbulb } from 'lucide-react'
 import PwaInstallBanner from './components/PwaInstallBanner'
+import FacebookBanner from './components/FacebookBanner'
 
 export default async function Home() {
   const supabase = createClient()
@@ -41,6 +42,7 @@ export default async function Home() {
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-8">
       <PwaInstallBanner />
+      <FacebookBanner />
 
       <header className="flex items-center justify-between gap-4">
         <div className="min-w-0">

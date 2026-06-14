@@ -129,15 +129,15 @@ export default function ProfileForm({ profile }: { profile: any }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-8 items-start">
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="flex flex-col gap-8 items-center">
         {/* Avatar Section */}
-        <div className="shrink-0 flex flex-col items-center gap-4 w-full md:w-auto">
+        <div className="shrink-0 flex flex-col items-center gap-4 w-full max-w-sm">
           <div className="relative group">
             {avatarUrl ? (
-              <img src={avatarUrl} alt="Avatar" className="w-32 h-32 rounded-full object-cover border-4 border-gray-100 shadow-sm" />
+              <img src={avatarUrl} alt="Avatar" className="w-36 h-36 rounded-full object-cover border-4 border-gray-100 shadow-sm" />
             ) : (
-              <div className="w-32 h-32 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-4xl font-bold border-4 border-gray-100 shadow-sm">
+              <div className="w-36 h-36 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-5xl font-bold border-4 border-gray-100 shadow-sm">
                 {name ? name[0].toUpperCase() : '?'}
               </div>
             )}
@@ -146,9 +146,9 @@ export default function ProfileForm({ profile }: { profile: any }) {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="absolute bottom-0 right-0 bg-primary text-white p-2.5 rounded-full shadow-lg hover:scale-105 transition-transform disabled:opacity-50"
+              className="absolute bottom-0 right-0 bg-primary text-white p-3 rounded-full shadow-lg hover:scale-105 transition-transform disabled:opacity-50"
             >
-              {uploading ? <Loader2 size={20} className="animate-spin" /> : <Camera size={20} />}
+              {uploading ? <Loader2 size={24} className="animate-spin" /> : <Camera size={24} />}
             </button>
             <input 
               type="file" 
@@ -159,15 +159,15 @@ export default function ProfileForm({ profile }: { profile: any }) {
             />
           </div>
 
-          <div className="text-center w-full">
-            <p className="text-sm font-bold text-gray-700 mb-2">Oppure scegli un avatar</p>
-            <div className="flex flex-wrap justify-center gap-2">
+          <div className="text-center w-full mt-2">
+            <p className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wider">Oppure scegli un avatar predefinito</p>
+            <div className="flex flex-wrap justify-center gap-3">
               {DEFAULT_AVATARS.map((url, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => setAvatarUrl(url)}
-                  className={`w-10 h-10 rounded-full border-2 transition-all hover:scale-110 overflow-hidden ${avatarUrl === url ? 'border-primary ring-2 ring-primary/30' : 'border-transparent'}`}
+                  className={`w-12 h-12 rounded-full border-2 transition-all hover:scale-110 overflow-hidden ${avatarUrl === url ? 'border-primary ring-4 ring-primary/20 scale-110' : 'border-transparent opacity-70 hover:opacity-100'}`}
                 >
                   <img src={url} alt={`Avatar ${i}`} className="w-full h-full object-cover" />
                 </button>
@@ -177,7 +177,7 @@ export default function ProfileForm({ profile }: { profile: any }) {
         </div>
         
         {/* Profile Info Section */}
-        <div className="flex-1 space-y-4 w-full">
+        <div className="flex-1 space-y-5 w-full">
           <div>
             <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
               <User size={16} /> Nome Completo
