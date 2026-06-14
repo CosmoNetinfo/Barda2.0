@@ -5,7 +5,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-sm rounded-3xl border border-gray-100 bg-white p-8 shadow-xl text-black">
         <div className="flex flex-col items-center mb-8">
-          <img src="/bardasci-logo.png" alt="I Bardasci Logo" className="w-24 h-24 object-contain mb-4" />
+          <img src="/bardasci-logo.svg" alt="I Bardasci Logo" className="w-24 h-24 object-contain mb-4" />
           <h1 className="text-3xl font-extrabold font-barlow text-primary uppercase tracking-tight">I Bardasci</h1>
           <p className="text-gray-500 font-medium text-sm mt-1">Accedi all&apos;app per continuare</p>
         </div>
