@@ -81,11 +81,11 @@ export default async function MembersPage() {
                   <img src={profile.avatar_url} alt={profile.name} className="w-24 h-24 rounded-full mb-4 shadow-sm border-4 border-white" />
                 ) : (
                   <div className="w-24 h-24 rounded-full mb-4 shadow-sm border-4 border-white bg-indigo-100 text-indigo-600 flex items-center justify-center text-3xl font-bold">
-                    {profile.name[0]}
+                    {(profile.name || '?')[0].toUpperCase()}
                   </div>
                 )}
                 
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{profile.name}</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{profile.name || 'Utente Anonimo'}</h3>
                 
                 {isAdmin && !isMe ? (
                   <div className="mb-4">
