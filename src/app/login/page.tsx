@@ -3,7 +3,7 @@ import { login, signup, signInWithGoogle } from './actions'
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-sm rounded-lg border bg-white p-6 shadow-sm">
+      <div className="w-full max-w-sm rounded-lg border bg-white p-6 shadow-sm text-black">
         <h1 className="mb-6 text-center text-2xl font-bold">Bardasci App</h1>
         <form className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
@@ -53,6 +53,7 @@ export default function LoginPage() {
           
           <button 
             formAction={signInWithGoogle} 
+            formNoValidate
             className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
