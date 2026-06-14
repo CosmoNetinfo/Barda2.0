@@ -4,6 +4,8 @@ import { Users, Info } from 'lucide-react'
 import CopyLinkButton from './components/CopyLinkButton'
 import RoleEditor from './components/RoleEditor'
 
+export const dynamic = 'force-dynamic'
+
 export default async function MembersPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -12,15 +14,22 @@ export default async function MembersPage() {
     redirect('/login')
   }
 
-  // Fetch profiles
-  const { data: profiles } = await supabase
-    .from('profiles')
-    .select('*')
-    .order('created_at', { ascending: true })
+  // Fetch profiles safely
+  let profiles = []
+  try {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: true })
+    
+    if (data) profiles = data
+  } catch (error) {
+    console.error("Error fetching profiles:", error)
+  }
 
-  const currentUserProfile = profiles?.find(p => p.id === user.id)
-  const isAdmin = currentUserProfile?.role === 'admin'
-  const isOnlyMember = profiles?.length === 1
+  const currentUserProfile = profiles.find(p => p.id === user.id)
+  const isAdmin = currentUserProfile?.role === 'admin' || currentUserProfile?.role === 'founder'
+  const isOnlyMember = profiles.length <= 1
 
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8 pb-24">
@@ -65,9 +74,11 @@ export default async function MembersPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {profiles?.map(profile => {
+          {profiles.map(profile => {
             const isMe = profile.id === user.id
-            const joinDate = new Date(profile.created_at).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })
+            const joinDate = profile.created_at 
+              ? new Date(profile.created_at).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })
+              : 'Sconosciuta'
             
             return (
               <div key={profile.id} className="relative bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex flex-col items-center text-center hover:shadow-md transition-all duration-300">
