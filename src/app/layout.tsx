@@ -22,6 +22,10 @@ export const metadata: Metadata = {
   title: "I Bardasci",
   description: "Webapp collaborativa per il gruppo I Bardasci",
   manifest: "/manifest.json",
+  icons: {
+    icon: '/favicon.png',
+    apple: '/icons/icon-192x192.png',
+  },
 };
 
 export default function RootLayout({
