@@ -34,24 +34,69 @@ export default function ProfileForm({ profile }: { profile: any }) {
     setSuccessMsg('')
 
     try {
+      // Convert to WebP and resize
+      const img = new window.Image();
+      const objectUrl = URL.createObjectURL(file);
+      
+      const compressedFile: File = await new Promise((resolve, reject) => {
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          const MAX_SIZE = 800;
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return reject(new Error('Canvas non supportato'));
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob((blob) => {
+            URL.revokeObjectURL(objectUrl);
+            if (blob) {
+              resolve(new File([blob], 'avatar.webp', { type: 'image/webp' }));
+            } else {
+              reject(new Error('Errore nella conversione immagine'));
+            }
+          }, 'image/webp', 0.8);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error('Errore nel caricamento immagine'));
+        };
+        img.src = objectUrl;
+      });
+
       const supabase = createClient()
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-      const filePath = `${profile.id}/${fileName}`
+      const filePath = `${profile.id}/avatar.webp`
       
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file, { upsert: true })
+        .upload(filePath, compressedFile, { upsert: true, cacheControl: '3600' })
 
       if (uploadError) throw uploadError
 
       const { data } = supabase.storage.from('avatars').getPublicUrl(filePath)
-      setAvatarUrl(data.publicUrl)
+      // Aggiungiamo un timestamp per forzare il refresh della cache del browser
+      const newAvatarUrl = `${data.publicUrl}?t=${Date.now()}`
+      setAvatarUrl(newAvatarUrl)
       
       // Auto-save the profile after a successful upload
       startTransition(async () => {
         try {
-          await updateProfile(name, bio, data.publicUrl)
+          await updateProfile(name, bio, newAvatarUrl)
           setSuccessMsg('Foto caricata e salvata con successo!')
           setTimeout(() => setSuccessMsg(''), 3000)
         } catch {
