@@ -1,4 +1,5 @@
 import { login, signup, signInWithGoogle } from './actions'
+import { Info } from 'lucide-react'
 
 export default function LoginPage({ searchParams }: { searchParams: { message: string } }) {
   return (
@@ -75,6 +76,25 @@ export default function LoginPage({ searchParams }: { searchParams: { message: s
             Accedi con Google
           </button>
         </form>
+
+        <div className="mt-8 pt-6 border-t border-gray-100">
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+            <h3 className="flex items-center gap-2 font-bold text-gray-800 mb-3">
+              <Info size={18} className="text-primary" />
+              Come accedere a Bardò
+            </h3>
+            <ol className="text-sm text-gray-500 space-y-2 mb-4 list-decimal pl-5">
+              <li>Clicca &quot;Accedi con Google&quot;</li>
+              <li>Scegli il tuo account Google</li>
+              <li>Al primo accesso il tuo profilo viene creato automaticamente</li>
+              <li>Sei dentro — nessun altro passaggio richiesto</li>
+            </ol>
+            <div className="bg-amber-50 text-amber-800 p-3 rounded-xl text-xs font-medium border border-amber-100">
+              <span className="font-bold block mb-1">⚠️ Accesso su invito</span>
+              Bardò è riservato ai membri de Li Bardasci. Se non riesci ad accedere, contatta un admin o il founder.
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
