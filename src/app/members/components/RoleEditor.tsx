@@ -24,9 +24,9 @@ export default function RoleEditor({ userId, initialRole }: { userId: string, in
         disabled={isPending}
         className="appearance-none bg-gray-100 text-gray-700 font-medium text-xs rounded-full px-3 py-1 pr-8 border border-transparent hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
       >
-        <option value="founder">Founder</option>
         <option value="admin">Admin</option>
         <option value="redattore">Redattore</option>
+        <option value="user">User</option>
         <option value="ospite">Ospite</option>
       </select>
       {/* Freccia custom per select */}
