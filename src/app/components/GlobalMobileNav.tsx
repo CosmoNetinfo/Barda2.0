@@ -88,6 +88,7 @@ function NavItem({ href, icon, label, active }: { href: string; icon: React.Reac
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function MoreItem({ router, href, icon, label, onClose }: { router: any, href: string, icon: React.ReactNode, label: string, onClose: () => void }) {
   return (
     <button 
