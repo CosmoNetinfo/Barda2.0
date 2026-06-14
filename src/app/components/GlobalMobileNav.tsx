@@ -19,26 +19,17 @@ export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
       {/* Overlay menu "Altro" */}
       {isMoreOpen && (
         <div 
-          className="md:hidden fixed inset-0 bg-black/60 z-[100] backdrop-blur-sm transition-opacity"
+          className="md:hidden fixed inset-0 bg-black/60 z-[9999] backdrop-blur-sm transition-opacity flex flex-col justify-end p-4 pb-24"
           onClick={handleClose}
         >
           <div 
-            className="absolute bottom-24 left-4 right-4 bg-white rounded-3xl p-6 shadow-2xl animate-in slide-in-from-bottom-10"
+            className="bg-white rounded-3xl p-6 shadow-2xl animate-in slide-in-from-bottom-10 w-full"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-center mb-6">
               <h3 className="font-bold text-xl text-gray-900">Altre Sezioni</h3>
-              <button 
-                onClick={() => {
-                  alert("DEBUG: Click su X per chiudere!");
-                  handleClose();
-                }} 
-                className="p-3 bg-red-100 rounded-full text-red-600 hover:bg-red-200"
-              >
-                <X size={24} />
-              </button>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
               <MoreItem href="/polls" icon={<BarChart2 size={28} className="text-violet-500" />} label="Sondaggi" onClose={handleClose} />
               <MoreItem href="/places" icon={<MapPin size={28} className="text-emerald-500" />} label="Luoghi" onClose={handleClose} />
               <MoreItem href="/members" icon={<Users size={28} className="text-indigo-500" />} label="Membri" onClose={handleClose} />
@@ -47,6 +38,13 @@ export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
                 <MoreItem href="/admin/debug" icon={<BarChart2 size={28} className="text-rose-500" />} label="Debug" onClose={handleClose} />
               )}
             </div>
+            
+            <button 
+              onClick={handleClose} 
+              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-4 rounded-2xl flex items-center justify-center gap-2"
+            >
+              <X size={20} /> Chiudi Menu
+            </button>
           </div>
         </div>
       )}
@@ -99,7 +97,6 @@ function MoreItem({ href, icon, label, onClose }: { href: string, icon: React.Re
       href={href}
       onClick={(e) => {
         e.preventDefault()
-        alert(`>>> DEBUG VISIVO: Hai cliccato su ${label}. Sto forzando il caricamento di ${href}`)
         console.log(`>>> DEBUG: Click su ${label} (${href})`)
         
         // Forzatura bruta del browser
