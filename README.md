@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bardasci App (Bardà)
 
-## Getting Started
+Bardasci App è una piattaforma web collaborativa progettata per la gestione e il coordinamento delle attività di una community. Sviluppata con Next.js e integrata con Supabase, l'applicazione permette ai membri di scambiarsi idee, pianificare eventi, gestire compiti (task), votare sondaggi e tenere traccia di luoghi da visitare.
 
-First, run the development server:
+---
+
+## 🚀 Funzionalità Principali
+
+L'applicazione è suddivisa in diverse sezioni, ognuna pensata per facilitare la collaborazione tra i membri:
+
+*   **💡 Bacheca delle Idee**: Uno spazio dove i membri possono proporre nuove iniziative, commentarle e raccogliere feedback.
+*   **✅ Gestione dei Task (Compiti)**: Una lavagna Kanban/Tasklist per creare compiti, assegnarli a uno o più utenti, impostare scadenze e tracciare lo stato (`todo`, `in_progress`, `done`).
+*   **🗳️ Sondaggi (Polls)**: Creazione di sondaggi a scelta singola o multipla per prendere decisioni di gruppo con visualizzazione delle percentuali di voto in tempo reale.
+*   **📅 Calendario Eventi**: Organizzazione di incontri e attività con gestione delle conferme di partecipazione (RSVP: *Parteciperò*, *Non parteciperò*, *Forse*).
+*   **📍 Luoghi da Provare (Places)**: Un archivio condiviso di locali, ristoranti o luoghi di interesse da visitare, con classificazione per categorie, rating e link a Google Maps.
+*   **👥 Gestione dei Membri**: Pannello amministrativo per monitorare i profili iscritti e assegnare ruoli specifici all'interno della piattaforma.
+
+---
+
+## 🛠️ Tech Stack
+
+*   **Framework**: [Next.js](https://nextjs.org/) (App Router & React Server Actions)
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) per un'interfaccia moderna, fluida e responsive
+*   **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL, Auth e Row Level Security)
+*   **Hosting**: [Vercel](https://vercel.com/)
+
+---
+
+## 💻 Guida per lo Sviluppo Locale
+
+### 1. Clonare il Repository e Installare le Dipendenze
+Per iniziare, clona il repository sul tuo computer ed esegui l'installazione dei pacchetti npm:
+
+```bash
+git clone https://github.com/CosmoNetinfo/Barda2.0.git
+cd bardasci-app
+npm install
+```
+
+### 2. Configurare le Variabili d'Ambiente
+Crea un file `.env.local` nella root del progetto partendo dal file di esempio `.env.local.example`:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Modifica il file `.env.local` inserendo le credenziali del tuo progetto Supabase:
+
+```env
+# Chiavi Pubbliche (sicure per il client e per il server)
+NEXT_PUBLIC_SUPABASE_URL=https://tuo-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=tua-anon-key
+
+# Chiave Privata di Amministrazione (DA NON MOSTRARE MAI SUL CLIENT)
+# Richiesta per le Server Action che eseguono modifiche amministrative (es. aggiornamento ruoli membri)
+SUPABASE_SERVICE_ROLE_KEY=tua-service-role-key
+```
+
+### 3. Avviare il Server di Sviluppo
+Avvia l'applicazione localmente in modalità di sviluppo:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+L'app sarà visibile all'indirizzo [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🗄️ Setup del Database (Supabase)
 
-## Learn More
+Il database è strutturato in PostgreSQL con Row Level Security (RLS) attiva per garantire che ogni membro possa accedere solo ai dati del proprio gruppo o della propria organizzazione.
 
-To learn more about Next.js, take a look at the following resources:
+### Struttura delle Tabelle principali
+I file SQL per la migrazione e il setup del database sono disponibili nella root del progetto:
+*   [database_final.sql](file:///d:/Bardà/bardasci-app/database_final.sql): Schema completo di tabelle (`events`, `event_rsvp`, `polls`, `poll_options`, `poll_votes`, `tasks`, `task_assignees`, `places`), abilitazione delle policy RLS e creazione delle policy di accesso per gruppi di utenti.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Come Inizializzare il Database:
+1.  Vai sul pannello di controllo di **Supabase** -> **SQL Editor**.
+2.  Crea una **New Query**.
+3.  Copia il contenuto di [database_final.sql](file:///d:/Bardà/bardasci-app/database_final.sql) ed eseguilo premendo **Run**.
+4.  *(Opzionale)* Esegui le query di fix specifiche se riscontri anomalie con la creazione dei task o con le relazioni dei profili.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 👥 Gestione Ruoli e Sicurezza
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+L'applicazione supporta un sistema gerarchico di ruoli per regolare l'accesso e le modifiche:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Ruolo | Descrizione | Privilegi |
+| :--- | :--- | :--- |
+| **Founder** 👑 | Il creatore o proprietario primario. | Accesso totale, può cambiare il ruolo di chiunque. |
+| **Admin** 🛡️ | Amministratore della community. | Gestione dei contenuti, può cambiare il ruolo dei membri standard. |
+| **Redattore** ✏️ | Collaboratore di contenuti. | Può scrivere, creare eventi o task, ma non ha accesso alle impostazioni amministrative. |
+| **Membro** 👤 | Membro standard della community. | Accesso di base in sola lettura e partecipazione alle attività (RSVP, voti). |
+
+### Come funziona l'aggiornamento dei ruoli (Bypass RLS):
+Per motivi di sicurezza, la tabella `profiles` ha delle policy RLS che impediscono ad un utente normale di aggiornare il profilo di altri utenti. 
+Per ovviare a questo e consentire agli amministratori di modificare i ruoli senza disattivare la sicurezza globale:
+1.  Il file [admin.ts](file:///d:/Bardà/bardasci-app/src/utils/supabase/admin.ts) istanzia un client Supabase speciale utilizzando la chiave `SUPABASE_SERVICE_ROLE_KEY`.
+2.  La Server Action [members.ts](file:///d:/Bardà/bardasci-app/src/app/actions/members.ts) verifica prima se l'utente che sta chiamando l'azione è un **Founder** o un **Admin** (utilizzando il client utente normale e sicuro).
+3.  Se la verifica va a buon fine, viene impiegato il client admin speciale (Service Role) per eseguire l'aggiornamento sulla tabella `profiles`, bypassando temporaneamente la RLS per quell'operazione specifica.
+
+> [!IMPORTANT]
+> Ricorda di configurare la variabile d'ambiente `SUPABASE_SERVICE_ROLE_KEY` anche sul tuo pannello di hosting (es. su Vercel in **Settings -> Environment Variables**), altrimenti il cambio dei ruoli dei membri non funzionerà e fallirà in produzione.
+
+---
+
+## 📦 Deploy su Vercel
+
+Il deploy dell'applicazione può essere eseguito facilmente su Vercel:
+
+1.  Connetti il tuo repository GitHub a Vercel.
+2.  Imposta le seguenti **Environment Variables**:
+    *   `NEXT_PUBLIC_SUPABASE_URL`
+    *   `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+    *   `SUPABASE_SERVICE_ROLE_KEY`
+3.  Avvia il build. Vercel configurerà automaticamente l'ambiente Next.js in modalità serverless.
