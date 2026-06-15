@@ -75,7 +75,7 @@ export default async function EventsPage() {
 
             // Formatting date beautifully
             const eventDate = new Date(event.date)
-            const month = eventDate.toLocaleString('it-IT', { month: 'short' }).toUpperCase()
+            const month = eventDate.toLocaleString('it-IT', { month: 'long' }).toUpperCase()
             const day = eventDate.getDate()
             const weekday = eventDate.toLocaleString('it-IT', { weekday: 'long' })
 
