@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 
 export async function createTask(formData: FormData) {
   const supabase = createClient()
@@ -53,4 +54,24 @@ export async function updateTaskStatus(taskId: string, status: string) {
   if (error) return { error: 'Errore aggiornamento stato' }
   
   revalidatePath('/tasks')
+}
+
+export async function deleteTask(taskId: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Non autenticato' }
+
+  const adminClient = createAdminClient()
+  const { error } = await adminClient
+    .from('tasks')
+    .delete()
+    .eq('id', taskId)
+
+  if (error) {
+    console.error('Error deleting task:', error)
+    return { error: 'Errore durante l\'eliminazione del task' }
+  }
+
+  revalidatePath('/tasks')
+  return { success: true }
 }

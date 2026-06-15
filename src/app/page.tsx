@@ -27,7 +27,7 @@ export default async function Home() {
     { data: latestIdeas }
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
-    supabase.from('events').select('id, title, date, location').gte('date', today).order('date', { ascending: true }).limit(1),
+    supabase.from('events').select('id, title, date, time, location').gte('date', today).order('date', { ascending: true }).limit(1),
     supabase.from('task_assignees').select('task_id, tasks!inner(id, title, status)').eq('user_id', user.id).neq('tasks.status', 'done'),
     supabase.from('ideas').select('id, title, description, created_at, category, profiles(name), idea_votes(count)').order('created_at', { ascending: false }).limit(3)
   ])
@@ -72,7 +72,7 @@ export default async function Home() {
             <Calendar size={120} />
           </div>
           <div>
-            <div className="flex items-center gap-2 text-indigo-600 mb-4">
+            <div className="flex items-center gap-2 text-primary mb-4">
               <Calendar size={20} />
               <h2 className="font-semibold text-sm uppercase tracking-wider">Prossimo Evento</h2>
             </div>
@@ -81,12 +81,11 @@ export default async function Home() {
                 <h3 className="text-2xl font-bold mb-1">{nextEvent.title}</h3>
                 <p className="text-gray-600 mb-6">
                   {new Date(nextEvent.date).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })} 
-                  {' • '}
-                  {new Date(nextEvent.date).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                  {nextEvent.time && ` • ${nextEvent.time}`}
                   {nextEvent.location && ` • ${nextEvent.location}`}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 relative z-10 mt-auto">
-                  <Link href={`/events`} className="flex-1 bg-indigo-600 text-white min-h-[48px] rounded-xl font-bold hover:bg-indigo-700 transition-colors flex justify-center items-center shadow-md">
+                  <Link href={`/events`} className="flex-1 bg-primary text-white min-h-[48px] rounded-xl font-bold hover:bg-primary/95 transition-colors flex justify-center items-center shadow-md">
                     Vedi dettagli
                   </Link>
                 </div>
@@ -94,7 +93,7 @@ export default async function Home() {
             ) : (
               <div className="py-8 text-center text-gray-400 relative z-10">
                 <p className="font-medium">Nessun evento in programma</p>
-                <Link href="/events" className="text-indigo-600 text-sm font-bold mt-2 inline-block">Proponine uno</Link>
+                <Link href="/events" className="text-primary text-sm font-bold mt-2 inline-block">Proponine uno</Link>
               </div>
             )}
           </div>

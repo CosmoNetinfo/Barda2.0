@@ -1,7 +1,7 @@
 'use client'
 
-import { updateTaskStatus } from '@/app/actions/tasks'
-import { Check, Clock, PlayCircle } from 'lucide-react'
+import { updateTaskStatus, deleteTask } from '@/app/actions/tasks'
+import { Check, Clock, PlayCircle, Trash2 } from 'lucide-react'
 import { useTransition } from 'react'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,6 +13,14 @@ export default function TaskItem({ task }: { task: any }) {
   const handleStatusChange = (newStatus: string) => {
     if (newStatus !== task.status) {
       startTransition(() => { updateTaskStatus(task.id, newStatus) })
+    }
+  }
+
+  const handleDelete = () => {
+    if (confirm('Sei sicuro di voler eliminare questo task?')) {
+      startTransition(async () => {
+        await deleteTask(task.id)
+      })
     }
   }
 
@@ -63,28 +71,39 @@ export default function TaskItem({ task }: { task: any }) {
           )}
         </div>
 
-        {/* Custom Status Switcher */}
-        <div className={`flex bg-gray-100/80 p-1 rounded-xl border border-gray-200/50 ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
+        {/* Custom Status Switcher & Delete Button */}
+        <div className="flex items-center gap-2 self-end sm:self-start">
+          <div className={`flex bg-gray-100/80 p-1 rounded-xl border border-gray-200/50 ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
+            <button 
+              onClick={() => handleStatusChange('todo')}
+              className={`p-2 rounded-lg transition-all ${task.status === 'todo' ? 'bg-white shadow-sm text-rose-600' : 'text-gray-400 hover:text-rose-500 hover:bg-white/50'}`}
+              title="Da Fare"
+            >
+              <Clock size={18} />
+            </button>
+            <button 
+              onClick={() => handleStatusChange('in_progress')}
+              className={`p-2 rounded-lg transition-all ${task.status === 'in_progress' ? 'bg-white shadow-sm text-amber-500' : 'text-gray-400 hover:text-amber-500 hover:bg-white/50'}`}
+              title="In Corso"
+            >
+              <PlayCircle size={18} />
+            </button>
+            <button 
+              onClick={() => handleStatusChange('done')}
+              className={`p-2 rounded-lg transition-all ${task.status === 'done' ? 'bg-white shadow-sm text-emerald-500' : 'text-gray-400 hover:text-emerald-500 hover:bg-white/50'}`}
+              title="Completato"
+            >
+              <Check size={18} />
+            </button>
+          </div>
+          
           <button 
-            onClick={() => handleStatusChange('todo')}
-            className={`p-2 rounded-lg transition-all ${task.status === 'todo' ? 'bg-white shadow-sm text-rose-600' : 'text-gray-400 hover:text-rose-500 hover:bg-white/50'}`}
-            title="Da Fare"
+            onClick={handleDelete}
+            disabled={isPending}
+            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-gray-200/60 min-w-[38px] min-h-[38px] flex items-center justify-center disabled:opacity-50"
+            title="Elimina Task"
           >
-            <Clock size={18} />
-          </button>
-          <button 
-            onClick={() => handleStatusChange('in_progress')}
-            className={`p-2 rounded-lg transition-all ${task.status === 'in_progress' ? 'bg-white shadow-sm text-amber-500' : 'text-gray-400 hover:text-amber-500 hover:bg-white/50'}`}
-            title="In Corso"
-          >
-            <PlayCircle size={18} />
-          </button>
-          <button 
-            onClick={() => handleStatusChange('done')}
-            className={`p-2 rounded-lg transition-all ${task.status === 'done' ? 'bg-white shadow-sm text-emerald-500' : 'text-gray-400 hover:text-emerald-500 hover:bg-white/50'}`}
-            title="Completato"
-          >
-            <Check size={18} />
+            <Trash2 size={18} />
           </button>
         </div>
       </div>
