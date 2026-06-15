@@ -37,7 +37,7 @@ export default function IdeaForm() {
     <>
       {/* Overlay & Wrapper */}
       <div 
-        className={`fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 z-[150] flex items-end md:items-center justify-center p-0 md:p-4 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
         <div 
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -57,7 +57,7 @@ export default function IdeaForm() {
             <h3 className="font-bold text-amber-800">Nuova Idea</h3>
             <button onClick={() => setIsOpen(false)} className="text-amber-600 hover:text-amber-800 text-sm font-semibold">Annulla</button>
           </div>
-          <form action={handleSubmit} className="p-4 space-y-4 max-h-[80vh] overflow-y-auto pb-safe">
+          <form action={handleSubmit} className="p-4 space-y-4 max-h-[80vh] overflow-y-auto pb-10">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Titolo</label>
               <input 
