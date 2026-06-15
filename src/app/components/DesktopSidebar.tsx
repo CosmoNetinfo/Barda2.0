@@ -13,7 +13,7 @@ export default function DesktopSidebar({ role = 'user' }: { role?: string }) {
         <div className="bg-white p-1.5 rounded-xl shadow-sm">
           <img src="/bardasci-logo.png" alt="Logo" className="h-10 object-contain" />
         </div>
-        <span className="font-barlow font-extrabold text-3xl tracking-tight text-white drop-shadow-sm">Bardò</span>
+        <span className="font-barlow font-extrabold text-3xl tracking-tight text-white drop-shadow-sm">Bardà</span>
       </div>
       
       <nav className="flex-1 px-4 space-y-3 overflow-y-auto pb-6 custom-scrollbar">

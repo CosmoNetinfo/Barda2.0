@@ -115,7 +115,7 @@ export default function LoginPage({ searchParams }: { searchParams: { message: s
 
             <div className="bg-amber-50 text-amber-800 p-3 rounded-xl text-xs font-medium border border-amber-100 mt-4">
               <span className="font-bold block mb-1">⚠️ Accesso su invito</span>
-              Bardò è riservato ai membri de Li Bardasci. Se non riesci ad accedere, contatta un admin o il founder.
+              Bardà è riservato ai membri de Li Bardasci. Se non riesci ad accedere, contatta un admin o il founder.
             </div>
           </div>
         </div>

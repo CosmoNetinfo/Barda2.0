@@ -32,8 +32,8 @@ export default function PwaInstallBanner() {
       </div>
       
       <div className="relative z-10">
-        <h3 className="font-barlow font-bold text-xl uppercase tracking-wider mb-1">Installa l&apos;App di Bardò</h3>
-        <p className="text-red-100 text-sm font-medium">Aggiungi Bardò alla tua home per un&apos;esperienza migliore e più veloce.</p>
+        <h3 className="font-barlow font-bold text-xl uppercase tracking-wider mb-1">Installa l&apos;App di Bardà</h3>
+        <p className="text-red-100 text-sm font-medium">Aggiungi Bardà alla tua home per un&apos;esperienza migliore e più veloce.</p>
       </div>
 
       <div className="relative z-10 flex w-full sm:w-auto items-center gap-3">

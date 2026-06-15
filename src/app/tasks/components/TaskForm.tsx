@@ -38,7 +38,7 @@ export default function TaskForm({ profiles }: { profiles: any[] }) {
     <>
       {/* Overlay & Wrapper */}
       <div 
-        className={`fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 z-[150] flex items-end md:items-center justify-center p-0 md:p-4 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
         <div 
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -58,7 +58,7 @@ export default function TaskForm({ profiles }: { profiles: any[] }) {
             <h3 className="font-bold text-lg tracking-wide">Nuovo Task</h3>
             <button type="button" onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white text-sm font-semibold transition-colors">Annulla</button>
           </div>
-          <form action={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto pb-safe">
+          <form action={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto pb-10">
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Cosa c&apos;è da fare?</label>
               <input 

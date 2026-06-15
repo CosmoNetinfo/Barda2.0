@@ -10,7 +10,7 @@ export default function InstallGuidePage() {
         </Link>
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 font-barlow uppercase">Installa l&apos;App</h1>
-          <p className="text-gray-500 font-medium mt-1">Aggiungi Bardò alla schermata home.</p>
+          <p className="text-gray-500 font-medium mt-1">Aggiungi Bardà alla schermata home.</p>
         </div>
       </header>
 

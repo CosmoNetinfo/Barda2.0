@@ -37,7 +37,7 @@ export default function EventForm() {
     <>
       {/* Overlay & Wrapper */}
       <div 
-        className={`fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 z-[150] flex items-end md:items-center justify-center p-0 md:p-4 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
         <div 
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -57,7 +57,7 @@ export default function EventForm() {
             <h3 className="font-bold text-red-900 text-lg">Nuovo Evento</h3>
             <button onClick={() => setIsOpen(false)} className="text-red-600 hover:text-red-800 text-sm font-semibold transition-colors">Annulla</button>
           </div>
-          <form action={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto pb-safe">
+          <form action={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto pb-10">
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Titolo Evento</label>
               <input 
