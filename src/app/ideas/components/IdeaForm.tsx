@@ -7,12 +7,18 @@ import { PlusCircle, Loader2 } from 'lucide-react'
 export default function IdeaForm() {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
-    await createIdea(formData)
+    setError('')
+    const result = await createIdea(formData)
     setLoading(false)
-    setIsOpen(false)
+    if (result?.error) {
+      setError(result.error)
+    } else {
+      setIsOpen(false)
+    }
   }
 
   if (!isOpen) {
@@ -85,6 +91,12 @@ export default function IdeaForm() {
                 placeholder="Spiega meglio di cosa si tratta..."
               />
             </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-3 text-sm font-medium">
+                ⚠️ {error}
+              </div>
+            )}
 
             <button 
               type="submit" 

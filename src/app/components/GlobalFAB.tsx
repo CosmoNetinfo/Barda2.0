@@ -24,9 +24,9 @@ export default function GlobalFAB() {
       <div className={`flex flex-col gap-3 mb-4 transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`}>
         <FabItem href="/ideas?new=1" icon={<Lightbulb size={20} />} label="Idea" color="bg-amber-500" />
         <FabItem href="/tasks?new=1" icon={<CheckSquare size={20} />} label="Task" color="bg-rose-500" />
-        <FabItem href="/events?new=1" icon={<Calendar size={20} />} label="Evento" color="bg-blue-500" />
+        <FabItem href="/events?new=1" icon={<Calendar size={20} />} label="Evento" color="bg-primary" />
         <FabItem href="/polls?new=1" icon={<BarChart2 size={20} />} label="Sondaggio" color="bg-violet-500" />
-        <FabItem href="/places?new=1" icon={<MapPin size={20} />} label="Luogo" color="bg-emerald-500" />
+        <FabItem href="/places?new=1" icon={<MapPin size={20} />} label="Luogo" color="bg-success" />
       </div>
 
       {/* Pulsante principale */}

@@ -8,6 +8,7 @@ export default function PollForm() {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [options, setOptions] = useState<string[]>(['', ''])
+  const [error, setError] = useState('')
 
   const addOption = () => setOptions([...options, ''])
   
@@ -25,13 +26,14 @@ export default function PollForm() {
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
+    setError('')
     const validOptions = options.filter(o => o.trim() !== '')
     formData.append('options', JSON.stringify(validOptions))
     const res = await createPoll(formData)
     setLoading(false)
     
     if (res?.error) {
-      alert("ERRORE: " + res.error)
+      setError(res.error)
       return
     }
     
@@ -141,6 +143,12 @@ export default function PollForm() {
                 + Aggiungi un&apos;altra opzione
               </button>
             </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-3 text-sm font-medium">
+                ⚠️ {error}
+              </div>
+            )}
 
             <button 
               type="submit" 

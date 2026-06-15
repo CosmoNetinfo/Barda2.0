@@ -31,9 +31,9 @@ export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
               <MoreItem href="/polls" icon={<BarChart2 size={28} className="text-violet-500" />} label="Sondaggi" onClose={handleClose} />
-              <MoreItem href="/places" icon={<MapPin size={28} className="text-emerald-500" />} label="Luoghi" onClose={handleClose} />
+              <MoreItem href="/places" icon={<MapPin size={28} className="text-success" />} label="Luoghi" onClose={handleClose} />
               <MoreItem href="/members" icon={<Users size={28} className="text-indigo-500" />} label="Membri" onClose={handleClose} />
-              <MoreItem href="/profile" icon={<User size={28} className="text-blue-500" />} label="Profilo" onClose={handleClose} />
+              <MoreItem href="/profile" icon={<User size={28} className="text-primary" />} label="Profilo" onClose={handleClose} />
               {role === 'founder' && (
                 <MoreItem href="/admin/debug" icon={<BarChart2 size={28} className="text-rose-500" />} label="Debug" onClose={handleClose} />
               )}
@@ -50,7 +50,7 @@ export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
       )}
 
       {/* Bottom Nav Bar */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-gradient-to-r from-success to-emerald-500 flex justify-around p-2 z-[110] pb-safe shadow-[0_-10px_30px_-15px_rgba(46,139,58,0.5)]">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-gradient-to-r from-success to-success-600 flex justify-around p-2 z-[110] pb-safe shadow-[0_-10px_30px_-15px_rgba(46,139,58,0.5)]">
         <NavItem href="/" icon={<Home size={24} />} label="Home" active={pathname === '/'} />
         <NavItem href="/ideas" icon={<Lightbulb size={24} />} label="Idee" active={pathname === '/ideas'} />
         <NavItem href="/tasks" icon={<CheckSquare size={24} />} label="Task" active={pathname === '/tasks'} />
@@ -62,7 +62,7 @@ export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
             setIsMoreOpen(true)
           }}
           className={`flex flex-col items-center justify-center gap-0.5 w-16 h-12 rounded-xl transition-all ${
-            isMoreOpen ? 'text-white scale-110' : 'text-emerald-100/80 hover:text-white'
+            isMoreOpen ? 'text-white scale-110' : 'text-success-100/80 hover:text-white'
           }`}
         >
           <div className={`${isMoreOpen ? 'bg-white/20 p-1.5 rounded-full shadow-sm' : 'p-1.5'}`}>
@@ -80,7 +80,7 @@ function NavItem({ href, icon, label, active }: { href: string; icon: React.Reac
     <Link 
       href={href} 
       className={`flex flex-col items-center justify-center gap-0.5 w-16 h-12 rounded-xl transition-all ${
-        active ? 'text-white scale-110' : 'text-emerald-100/80 hover:text-white'
+        active ? 'text-white scale-110' : 'text-success-100/80 hover:text-white'
       }`}
     >
       <div className={`${active ? 'bg-white/20 p-1.5 rounded-full shadow-sm' : 'p-1.5'}`}>

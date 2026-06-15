@@ -12,30 +12,41 @@ export default async function EventsPage() {
     redirect('/login')
   }
 
-  // Fetch events with author profiles
-  const { data: events } = await supabase
+  // Fetch events
+  const { data: eventsRaw } = await supabase
     .from('events')
-    .select(`
-      *,
-      profiles!events_author_id_fkey(name, avatar_url)
-    `)
+    .select('*')
     .order('date', { ascending: true })
 
   // Fetch RSVPs
-  const { data: rsvps } = await supabase
+  const { data: rsvpsRaw } = await supabase
     .from('event_rsvp')
-    .select(`
-      event_id,
-      status,
-      user_id,
-      profiles!event_rsvp_user_id_fkey(name, avatar_url)
-    `)
+    .select('*')
+
+  // Fetch profiles
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('id, name, avatar_url')
+
+  const profileMap = new Map(profiles?.map(p => [p.id, p]) || [])
+
+  // Map author profile to events
+  const events = eventsRaw?.map(event => ({
+    ...event,
+    profiles: profileMap.get(event.author_id) || null
+  })) || []
+
+  // Map user profile to RSVPs
+  const rsvps = rsvpsRaw?.map(rsvp => ({
+    ...rsvp,
+    profiles: profileMap.get(rsvp.user_id) || null
+  })) || []
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-8 pb-24">
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b pb-6 border-gray-200">
         <div className="flex items-center gap-4">
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-4 rounded-3xl shadow-lg shadow-blue-200">
+          <div className="bg-gradient-to-br from-primary to-primary-600 text-white p-4 rounded-3xl shadow-lg shadow-primary/20">
             <Calendar size={32} />
           </div>
           <div>
@@ -114,7 +125,7 @@ export default async function EventsPage() {
                             return profile?.avatar_url ? (
                               <img key={i} src={profile.avatar_url} alt={profile.name} className="w-10 h-10 rounded-full border-2 border-white shadow-sm" title={profile.name} />
                             ) : (
-                              <div key={i} className="w-10 h-10 rounded-full border-2 border-white shadow-sm bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs" title={profile?.name}>
+                              <div key={i} className="w-10 h-10 rounded-full border-2 border-white shadow-sm bg-red-50 text-red-600 flex items-center justify-center font-bold text-xs" title={profile?.name}>
                                 {profile?.name?.[0] || '?'}
                               </div>
                             )

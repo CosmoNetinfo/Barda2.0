@@ -49,14 +49,14 @@ export default function AdminActions({ members, ideas, tasks, events, logs }: an
                   <td className="p-3 font-bold">{m.name}</td>
                   <td className="p-3 text-sm">
                     <select 
-                      value={m.role || 'user'} 
+                      value={m.role || 'membro'} 
                       onChange={(e) => handleAction(() => updateMemberRole(m.id, e.target.value))}
                       className="bg-gray-100 rounded px-2 py-1 text-sm font-medium"
                     >
-                      <option value="user">Ospite / Utente</option>
-                      <option value="redattore">Redattore</option>
-                      <option value="admin">Admin</option>
-                      <option value="founder">Founder</option>
+                      <option value="membro">👤 Membro</option>
+                      <option value="redattore">✏️ Redattore</option>
+                      <option value="admin">🛡️ Admin</option>
+                      <option value="founder" disabled>👑 Founder</option>
                     </select>
                   </td>
                   <td className="p-3">

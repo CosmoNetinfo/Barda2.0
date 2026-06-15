@@ -19,10 +19,32 @@ export default async function TasksPage() {
     .order('name')
 
   // Fetch tasks
-  const { data: tasks, error: tasksError } = await supabase
+  const { data: tasksRaw, error: tasksError } = await supabase
     .from('tasks')
     .select('*')
     .order('created_at', { ascending: false })
+
+  // Fetch task assignees
+  const { data: assigneesRaw } = await supabase
+    .from('task_assignees')
+    .select('*')
+
+  const profileMap = new Map(profiles?.map(p => [p.id, p]) || [])
+
+  // Map assignees to tasks to retain compatibility with TaskItem.tsx
+  const tasks = tasksRaw?.map(task => {
+    const taskAssignees = assigneesRaw
+      ?.filter(a => a.task_id === task.id)
+      .map(a => ({
+        profiles: profileMap.get(a.user_id) || null
+      }))
+      .filter(a => a.profiles !== null) || []
+
+    return {
+      ...task,
+      task_assignees: taskAssignees
+    }
+  }) || []
 
   // Debug: log if tasks query fails
   if (tasksError) {

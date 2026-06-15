@@ -11,8 +11,21 @@ export async function createEvent(formData: FormData) {
   const title = formData.get('title') as string
   const description = formData.get('description') as string
   const location = formData.get('location') as string
-  const date = formData.get('date') as string
-  const time = formData.get('time') as string
+
+  // Costruire date e time dai campi separati (fix iOS Safari)
+  const day = formData.get('day') as string
+  const month = formData.get('month') as string
+  const year = formData.get('year') as string
+  const hour = formData.get('hour') as string
+  const minute = formData.get('minute') as string
+
+  // Formato data per Supabase: YYYY-MM-DD
+  const date = year && month && day
+    ? `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+    : null
+
+  // Formato ora: HH:MM
+  const time = hour && minute ? `${hour}:${minute}` : null
 
   if (!title || !date) {
     return { error: 'Titolo e Data sono obbligatori' }
