@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { createEvent } from '@/app/actions/events'
-import { PlusCircle, Loader2, MapPin, Calendar as CalendarIcon, Clock } from 'lucide-react'
+import { PlusCircle, Loader2, MapPin } from 'lucide-react'
 
 export default function EventForm() {
   const [isOpen, setIsOpen] = useState(false)
