@@ -4,13 +4,13 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 text-gray-800 font-sans">
       <div className="w-full max-w-3xl bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-12">
-        {/* Pulsante Torna al Login */}
+        {/* Pulsante Torna alla Dashboard */}
         <div className="mb-8">
           <Link 
-            href="/login" 
+            href="/" 
             className="inline-flex items-center text-sm font-semibold text-[#E8201A] hover:text-[#d11913] transition-colors gap-1.5"
           >
-            ← Torna al login
+            ← Torna alla dashboard
           </Link>
         </div>
 
