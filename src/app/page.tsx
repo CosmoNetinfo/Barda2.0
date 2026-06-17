@@ -28,7 +28,7 @@ export default async function Home() {
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
     supabase.from('events').select('id, title, date, time, location').gte('date', today).order('date', { ascending: true }).limit(1),
-    supabase.from('task_assignees').select('task_id, tasks!inner(id, title, status)').eq('user_id', user.id).neq('tasks.status', 'done'),
+    supabase.from('task_assignees').select('task_id').eq('user_id', user.id),
     supabase.from('ideas').select('id, title, description, created_at, category, author_id').order('created_at', { ascending: false }).limit(3)
   ])
 
@@ -36,9 +36,19 @@ export default async function Home() {
   const firstName = fullName.split(' ')[0]
   const nextEvent = nextEvents?.[0]
   
-  // Extract tasks from join
+  // Fetch tasks corresponding to the user's assignees locally to avoid relational join errors
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const myTasks = myTasksRaw?.map((t: any) => t.tasks) || []
+  const taskIds = myTasksRaw?.map((a: any) => a.task_id) || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let myTasks: any[] = []
+  if (taskIds.length > 0) {
+    const { data: fetchedTasks } = await supabase
+      .from('tasks')
+      .select('id, title, status')
+      .in('id', taskIds)
+      .neq('status', 'done')
+    myTasks = fetchedTasks || []
+  }
 
   // Fetch profiles matching the author ids
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

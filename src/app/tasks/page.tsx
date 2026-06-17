@@ -93,7 +93,7 @@ export default async function TasksPage() {
             ) : (
               <div className="grid grid-cols-1 gap-3">
                 {todoTasks.map(task => (
-                  <TaskItem key={task.id} task={task} />
+                  <TaskItem key={task.id} task={task} profiles={profiles || []} />
                 ))}
               </div>
             )}
@@ -110,7 +110,7 @@ export default async function TasksPage() {
             ) : (
               <div className="grid grid-cols-1 gap-3">
                 {inProgressTasks.map(task => (
-                  <TaskItem key={task.id} task={task} />
+                  <TaskItem key={task.id} task={task} profiles={profiles || []} />
                 ))}
               </div>
             )}
@@ -127,7 +127,7 @@ export default async function TasksPage() {
             ) : (
               <div className="grid grid-cols-1 gap-3">
                 {doneTasks.map(task => (
-                  <TaskItem key={task.id} task={task} />
+                  <TaskItem key={task.id} task={task} profiles={profiles || []} />
                 ))}
               </div>
             )}
