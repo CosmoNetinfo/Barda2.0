@@ -49,6 +49,16 @@ export default function GlobalMobileNav({ role = 'user' }: { role?: string }) {
         </div>
       )}
 
+      {/* Link Privacy Policy Mobile sopra la barra di navigazione */}
+      <div className="md:hidden fixed bottom-16 inset-x-0 flex justify-center z-[100] pointer-events-none">
+        <Link 
+          href="/privacy" 
+          className="text-[10px] text-gray-500 bg-gray-50/90 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-200/80 shadow-sm pointer-events-auto transition-colors hover:text-gray-800"
+        >
+          Privacy Policy
+        </Link>
+      </div>
+
       {/* Bottom Nav Bar */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 bg-gradient-to-r from-success to-success-600 flex justify-around p-2 z-[110] pb-safe shadow-[0_-10px_30px_-15px_rgba(46,139,58,0.5)]">
         <NavItem href="/" icon={<Home size={24} />} label="Home" active={pathname === '/'} />

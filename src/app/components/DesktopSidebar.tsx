@@ -34,6 +34,9 @@ export default function DesktopSidebar({ role = 'user' }: { role?: string }) {
       </nav>
 
       <div className="p-4 text-center border-t border-white/20 mt-auto">
+        <Link href="/privacy" className="text-xs text-white/60 hover:text-white transition-colors block mb-2 underline">
+          Privacy Policy
+        </Link>
         <p className="text-[10px] text-white/60 font-medium">
           Sviluppato con ❤️ da<br/>
           <a href="https://cosmonet.info" target="_blank" rel="noopener noreferrer" className="font-bold text-white hover:text-emerald-200 transition-colors">

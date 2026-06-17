@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 import { createClient } from "@/utils/supabase/server";
+import AppLayoutWrapper from "./components/AppLayoutWrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,10 +14,6 @@ const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
   variable: "--font-barlow-condensed",
 });
-
-import DesktopSidebar from "./components/DesktopSidebar";
-import GlobalMobileNav from "./components/GlobalMobileNav";
-import GlobalFAB from "./components/GlobalFAB";
 
 export const metadata: Metadata = {
   title: "I Bardasci",
@@ -37,27 +34,33 @@ export default async function RootLayout({
   const { data: { user } } = await supabase.auth.getUser();
   
   let role = 'user';
+  let consentAcceptedAt: string | null = null;
   if (user) {
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-    if (profile?.role) role = profile.role;
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role, consent_accepted_at')
+      .eq('id', user.id)
+      .single();
+
+    if (profile) {
+      if (profile.role) role = profile.role;
+      if (profile.consent_accepted_at) {
+        consentAcceptedAt = profile.consent_accepted_at;
+      }
+    }
   }
 
   return (
     <html lang="it">
-      <body className={`${inter.variable} ${barlowCondensed.variable} font-sans antialiased bg-gray-50 pb-20 md:pb-0 md:pl-64`}>
+      <body className={`${inter.variable} ${barlowCondensed.variable} font-sans antialiased bg-gray-50`}>
         {/* Barra decorativa in alto */}
         <div className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-rose-500 to-orange-500 z-[100]" />
         
-        <DesktopSidebar role={role} />
-
-        {/* Contenuto Principale */}
-        <main className="min-h-screen">
+        <AppLayoutWrapper role={role} hasUser={!!user} consentAcceptedAt={consentAcceptedAt}>
           {children}
-        </main>
-
-        <GlobalFAB />
-        <GlobalMobileNav role={role} />
+        </AppLayoutWrapper>
       </body>
     </html>
   );
 }
+
