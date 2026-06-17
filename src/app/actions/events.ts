@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 
 export async function createEvent(formData: FormData) {
   const supabase = createClient()
@@ -54,8 +55,10 @@ export async function rsvpEvent(eventId: string, status: 'yes' | 'no' | 'maybe')
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Non autenticato' }
 
+    const adminClient = createAdminClient()
+
     // Controlla rsvp esistente - usando limit(1) per evitare l'errore single()
-    const { data: existingList, error: checkError } = await supabase
+    const { data: existingList, error: checkError } = await adminClient
       .from('event_rsvp')
       .select('status')
       .eq('event_id', eventId)
@@ -70,7 +73,7 @@ export async function rsvpEvent(eventId: string, status: 'yes' | 'no' | 'maybe')
     const existing = existingList && existingList.length > 0 ? existingList[0] : null
 
     if (existing) {
-      const { error: updateError } = await supabase
+      const { error: updateError } = await adminClient
         .from('event_rsvp')
         .update({ status })
         .eq('event_id', eventId)
@@ -81,7 +84,7 @@ export async function rsvpEvent(eventId: string, status: 'yes' | 'no' | 'maybe')
         return { error: `Errore durante l'aggiornamento: ${updateError.message}` }
       }
     } else {
-      const { error: insertError } = await supabase
+      const { error: insertError } = await adminClient
         .from('event_rsvp')
         .insert({
           event_id: eventId,
