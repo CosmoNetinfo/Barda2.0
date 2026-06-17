@@ -12,6 +12,7 @@ export default function TaskItem({ task, profiles = [] }: { task: any, profiles?
   const [editError, setEditError] = useState('')
 
   const assignee = task.task_assignees?.[0]?.profiles
+  const isAssignedToAll = task.task_assignees?.length > 1 && task.task_assignees?.length >= (profiles?.length || 0);
 
   const handleStatusChange = (newStatus: string) => {
     if (newStatus !== task.status) {
@@ -85,17 +86,37 @@ export default function TaskItem({ task, profiles = [] }: { task: any, profiles?
 
           {/* Bottom Actions & Assignee */}
           <div className="flex items-center justify-between gap-2 pt-3 border-t border-gray-100/80 mt-1">
-            {assignee ? (
-              <div className="flex items-center gap-2 min-w-0">
-                {assignee.avatar_url ? (
-                  <img src={assignee.avatar_url} alt={assignee.name} className="w-6 h-6 rounded-full border border-gray-200 object-cover shrink-0" />
-                ) : (
-                  <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
-                    {assignee.name[0]}
+            {task.task_assignees && task.task_assignees.length > 0 ? (
+              task.task_assignees.length === 1 ? (
+                <div className="flex items-center gap-2 min-w-0">
+                  {assignee?.avatar_url ? (
+                    <img src={assignee.avatar_url} alt={assignee.name} className="w-6 h-6 rounded-full border border-gray-200 object-cover shrink-0" />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
+                      {assignee?.name?.[0] || '?'}
+                    </div>
+                  )}
+                  <span className="text-xs font-semibold text-gray-600 truncate">{assignee?.name}</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex -space-x-1.5 overflow-hidden shrink-0">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {task.task_assignees.slice(0, 3).map((a: any, idx: number) => (
+                      a.profiles?.avatar_url ? (
+                        <img key={idx} src={a.profiles.avatar_url} alt="" className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover shrink-0" />
+                      ) : (
+                        <div key={idx} className="inline-block h-6 w-6 rounded-full ring-2 ring-white bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold shrink-0">
+                          {a.profiles?.name?.[0] || '?'}
+                        </div>
+                      )
+                    ))}
                   </div>
-                )}
-                <span className="text-xs font-semibold text-gray-600 truncate">{assignee.name}</span>
-              </div>
+                  <span className="text-xs font-semibold text-gray-500 truncate">
+                    {task.task_assignees.length >= (profiles?.length || 0) ? 'Tutti i membri' : `Assegnato a ${task.task_assignees.length} persone`}
+                  </span>
+                </div>
+              )
             ) : (
               <div />
             )}
@@ -180,10 +201,11 @@ export default function TaskItem({ task, profiles = [] }: { task: any, profiles?
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Assegna a</label>
                   <select 
                     name="assignee_id"
-                    defaultValue={assignee?.id || ''}
+                    defaultValue={isAssignedToAll ? 'all' : (assignee?.id || '')}
                     className="w-full bg-gray-50/50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none transition-all font-medium"
                   >
                     <option value="">Lascia non assegnato</option>
+                    <option value="all">👥 Assegna a tutti i membri</option>
                     {profiles.map(p => (
                       <option key={p.id} value={p.id}>{p.name}</option>
                     ))}

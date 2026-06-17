@@ -78,6 +78,7 @@ export default function TaskForm({ profiles }: { profiles: any[] }) {
                   className="w-full bg-gray-50/50 border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none transition-all font-medium"
                 >
                   <option value="">Lascia non assegnato</option>
+                  <option value="all">👥 Assegna a tutti i membri</option>
                   {profiles.map(p => (
                     <option key={p.id} value={p.id}>{p.name}</option>
                   ))}

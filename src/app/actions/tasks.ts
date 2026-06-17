@@ -33,7 +33,19 @@ export async function createTask(formData: FormData) {
       return { error: `Errore durante la creazione del task: ${error?.message || 'Risposta vuota'}` }
     }
 
-    if (assigneeId) {
+    if (assigneeId === 'all') {
+      const { data: profiles } = await adminClient.from('profiles').select('id')
+      if (profiles && profiles.length > 0) {
+        const insertData = profiles.map(p => ({
+          task_id: task.id,
+          user_id: p.id
+        }))
+        const { error: assignError } = await adminClient.from('task_assignees').insert(insertData)
+        if (assignError) {
+          console.error('Error assigning task to all:', assignError)
+        }
+      }
+    } else if (assigneeId) {
       const { error: assignError } = await adminClient.from('task_assignees').insert({
         task_id: task.id,
         user_id: assigneeId
@@ -91,7 +103,20 @@ export async function updateTask(taskId: string, formData: FormData) {
       .delete()
       .eq('task_id', taskId)
 
-    if (assigneeId) {
+    if (assigneeId === 'all') {
+      const { data: profiles } = await adminClient.from('profiles').select('id')
+      if (profiles && profiles.length > 0) {
+        const insertData = profiles.map(p => ({
+          task_id: taskId,
+          user_id: p.id
+        }))
+        const { error: assignError } = await adminClient.from('task_assignees').insert(insertData)
+        if (assignError) {
+          console.error('Error assigning task to all:', assignError)
+          return { error: `Errore assegnazione task a tutti: ${assignError.message}` }
+        }
+      }
+    } else if (assigneeId) {
       const { error: assignError } = await adminClient
         .from('task_assignees')
         .insert({
