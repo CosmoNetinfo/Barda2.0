@@ -12,14 +12,24 @@ export default async function IdeasPage() {
     redirect('/login')
   }
 
-  // Fetch ideas with author profiles
-  const { data: ideas } = await supabase
+  // Fetch ideas
+  const { data: ideasRaw } = await supabase
     .from('ideas')
-    .select(`
-      *,
-      profiles!ideas_author_id_fkey(name, avatar_url)
-    `)
+    .select('*')
     .order('created_at', { ascending: false })
+
+  // Fetch profiles
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('id, name, avatar_url')
+
+  const profileMap = new Map(profiles?.map(p => [p.id, p]) || [])
+
+  // Map author profile to ideas
+  const ideas = ideasRaw?.map(idea => ({
+    ...idea,
+    profiles: profileMap.get(idea.author_id) || null
+  })) || []
 
   // Fetch votes for this user
   const { data: myVotes } = await supabase
