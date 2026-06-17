@@ -81,61 +81,58 @@ export default async function TasksPage() {
         </div>
       ) : (
         <>
-          {/* Layout Mobile: Lista piatta singola */}
-          <div className="md:hidden space-y-3">
-            {tasks?.map(task => (
-              <div key={task.id} className="relative">
-                {/* Badge colorato sulla sinistra (opzionale, si può fare direttamente nel TaskItem o con un overlay) */}
-                <div className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl z-20 ${
-                  task.status === 'todo' ? 'bg-rose-500' : 
-                  task.status === 'in_progress' ? 'bg-amber-500' : 'bg-emerald-500'
-                }`}></div>
-                <TaskItem task={task} />
-              </div>
-            ))}
-          </div>
-
-          {/* Layout Desktop: 3 Colonne */}
-          <div className="hidden md:grid grid-cols-3 gap-6">
-            {/* Da Fare Column */}
-            <div className="space-y-4">
-              <h2 className="font-bold flex items-center gap-2 text-rose-600">
-                <span className="w-2 h-2 rounded-full bg-rose-500"></span>
-                Da Fare ({todoTasks.length})
-              </h2>
-              <div className="space-y-3">
+        <div className="space-y-8">
+          {/* Da Fare */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold flex items-center gap-2 text-rose-600 border-b pb-2 border-rose-100">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0"></span>
+              Da Fare ({todoTasks.length})
+            </h2>
+            {todoTasks.length === 0 ? (
+              <p className="text-sm text-gray-400 italic pl-1">Nessun task in questa lista.</p>
+            ) : (
+              <div className="grid grid-cols-1 gap-3">
                 {todoTasks.map(task => (
                   <TaskItem key={task.id} task={task} />
                 ))}
               </div>
-            </div>
+            )}
+          </div>
 
-            {/* In Corso Column */}
-            <div className="space-y-4">
-              <h2 className="font-bold flex items-center gap-2 text-amber-500">
-                <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                In Lavorazione ({inProgressTasks.length})
-              </h2>
-              <div className="space-y-3">
+          {/* In Lavorazione */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold flex items-center gap-2 text-amber-500 border-b pb-2 border-amber-100">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span>
+              In Lavorazione ({inProgressTasks.length})
+            </h2>
+            {inProgressTasks.length === 0 ? (
+              <p className="text-sm text-gray-400 italic pl-1">Nessun task in questa lista.</p>
+            ) : (
+              <div className="grid grid-cols-1 gap-3">
                 {inProgressTasks.map(task => (
                   <TaskItem key={task.id} task={task} />
                 ))}
               </div>
-            </div>
+            )}
+          </div>
 
-            {/* Completati Column */}
-            <div className="space-y-4">
-              <h2 className="font-bold flex items-center gap-2 text-emerald-500">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                Fatto ({doneTasks.length})
-              </h2>
-              <div className="space-y-3">
+          {/* Fatto */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold flex items-center gap-2 text-emerald-600 border-b pb-2 border-emerald-100">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+              Completati ({doneTasks.length})
+            </h2>
+            {doneTasks.length === 0 ? (
+              <p className="text-sm text-gray-400 italic pl-1">Nessun task completato.</p>
+            ) : (
+              <div className="grid grid-cols-1 gap-3">
                 {doneTasks.map(task => (
                   <TaskItem key={task.id} task={task} />
                 ))}
               </div>
-            </div>
+            )}
           </div>
+        </div>
         </>
       )}
     </div>
