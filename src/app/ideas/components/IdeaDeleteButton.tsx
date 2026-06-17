@@ -3,9 +3,11 @@
 import { deleteIdea } from '@/app/actions/ideas'
 import { Trash2, Loader2 } from 'lucide-react'
 import { useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function IdeaDeleteButton({ ideaId }: { ideaId: string }) {
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   const handleDelete = () => {
     if (confirm('Sei sicuro di voler eliminare questa idea?')) {
@@ -13,6 +15,8 @@ export default function IdeaDeleteButton({ ideaId }: { ideaId: string }) {
         const res = await deleteIdea(ideaId)
         if (res && res.error) {
           alert(res.error)
+        } else {
+          router.refresh()
         }
       })
     }
