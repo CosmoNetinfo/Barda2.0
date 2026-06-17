@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 
 export async function createIdea(formData: FormData) {
   const supabase = createClient()
@@ -122,7 +123,8 @@ export async function deleteIdea(ideaId: string) {
     return { error: 'Non hai i permessi per eliminare questa idea' }
   }
 
-  const { error } = await supabase
+  const adminClient = createAdminClient()
+  const { error } = await adminClient
     .from('ideas')
     .delete()
     .eq('id', ideaId)
