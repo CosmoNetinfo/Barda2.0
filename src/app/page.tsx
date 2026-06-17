@@ -24,20 +24,43 @@ export default async function Home() {
     { data: profile },
     { data: nextEvents },
     { data: myTasksRaw },
-    { data: latestIdeas }
+    { data: latestIdeasRaw }
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
     supabase.from('events').select('id, title, date, time, location').gte('date', today).order('date', { ascending: true }).limit(1),
     supabase.from('task_assignees').select('task_id, tasks!inner(id, title, status)').eq('user_id', user.id).neq('tasks.status', 'done'),
-    supabase.from('ideas').select('id, title, description, created_at, category, profiles(name), idea_votes(count)').order('created_at', { ascending: false }).limit(3)
+    supabase.from('ideas').select('id, title, description, created_at, category, author_id').order('created_at', { ascending: false }).limit(3)
   ])
 
   const fullName = profile?.name || user.email?.split('@')[0] || 'Membro'
   const firstName = fullName.split(' ')[0]
   const nextEvent = nextEvents?.[0]
+  
   // Extract tasks from join
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const myTasks = myTasksRaw?.map((t: any) => t.tasks) || []
+
+  // Fetch profiles matching the author ids
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const authorIds = latestIdeasRaw?.map((i: any) => i.author_id).filter(Boolean) || []
+  const { data: ideaAuthors } = await supabase.from('profiles').select('id, name').in('id', authorIds)
+  const authorMap = new Map(ideaAuthors?.map(a => [a.id, a]) || [])
+
+  // Fetch votes count
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ideaIds = latestIdeasRaw?.map((i: any) => i.id) || []
+  const { data: votesRaw } = await supabase.from('idea_votes').select('idea_id, vote').in('idea_id', ideaIds)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const latestIdeas = latestIdeasRaw?.map((idea: any) => {
+    const upVotesCount = votesRaw?.filter(v => v.idea_id === idea.id && v.vote === 'up').length || 0;
+    const author = authorMap.get(idea.author_id) || null;
+    return {
+      ...idea,
+      profiles: author,
+      idea_votes: [{ count: upVotesCount }]
+    }
+  }) || []
 
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-8">

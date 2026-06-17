@@ -29,6 +29,7 @@ export async function createIdea(formData: FormData) {
   }
 
   revalidatePath('/ideas')
+  revalidatePath('/')
   return { success: true }
 }
 
@@ -73,6 +74,7 @@ export async function voteIdea(ideaId: string, voteType: 'up' | 'down') {
   }
 
   revalidatePath('/ideas')
+  revalidatePath('/')
 }
 
 export async function updateIdeaStatus(ideaId: string, status: string) {
@@ -88,4 +90,50 @@ export async function updateIdeaStatus(ideaId: string, status: string) {
   if (error) return { error: 'Errore aggiornamento stato' }
   
   revalidatePath('/ideas')
+  revalidatePath('/')
 }
+
+export async function deleteIdea(ideaId: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Non autenticato' }
+
+  // Get user role to see if admin, and check if author
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const { data: idea } = await supabase
+    .from('ideas')
+    .select('author_id')
+    .eq('id', ideaId)
+    .single()
+
+  if (!idea) {
+    return { error: 'Idea non trovata' }
+  }
+
+  const isAuthor = idea.author_id === user.id
+  const isAdmin = profile?.role?.toLowerCase() === 'admin'
+
+  if (!isAuthor && !isAdmin) {
+    return { error: 'Non hai i permessi per eliminare questa idea' }
+  }
+
+  const { error } = await supabase
+    .from('ideas')
+    .delete()
+    .eq('id', ideaId)
+
+  if (error) {
+    console.error('Error deleting idea:', error)
+    return { error: 'Errore durante l\'eliminazione dell\'idea' }
+  }
+
+  revalidatePath('/ideas')
+  revalidatePath('/')
+  return { success: true }
+}
+

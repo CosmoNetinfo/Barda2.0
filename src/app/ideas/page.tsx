@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { Lightbulb, MessageSquare } from 'lucide-react'
 import IdeaForm from './components/IdeaForm'
 import IdeaVoteButtons from './components/IdeaVoteButtons'
+import IdeaDeleteButton from './components/IdeaDeleteButton'
+
 
 export default async function IdeasPage() {
   const supabase = createClient()
@@ -38,6 +40,14 @@ export default async function IdeasPage() {
     .eq('user_id', user.id)
 
   const myVoteMap = new Map(myVotes?.map(v => [v.idea_id, v.vote]))
+
+  // Fetch current user's profile to check role
+  const { data: myProfile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
 
   // In a real app we'd do an aggregate query, but we can aggregate votes here for demo
   const { data: allVotes } = await supabase
@@ -78,9 +88,13 @@ export default async function IdeasPage() {
             const counts = voteCounts.get(idea.id) || { up: 0, down: 0 }
             const myVote = myVoteMap.get(idea.id) || null
             const author = Array.isArray(idea.profiles) ? idea.profiles[0] : idea.profiles;
+            const isAuthor = idea.author_id === user.id
+            const isAdmin = myProfile?.role?.toLowerCase() === 'admin'
+            const canDelete = isAuthor || isAdmin
 
             return (
               <div key={idea.id} className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col sm:flex-row gap-4 hover:shadow-md transition">
+
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md">
@@ -125,10 +139,15 @@ export default async function IdeasPage() {
                     downVotes={counts.down} 
                   />
                   
-                  <button className="flex items-center gap-1.5 text-gray-500 hover:text-gray-900 text-sm font-medium transition">
-                    <MessageSquare size={16} />
-                    <span>Commenta</span>
-                  </button>
+                  <div className="flex items-center gap-3 w-full justify-around sm:justify-start">
+                    <button className="flex items-center gap-1.5 text-gray-500 hover:text-gray-900 text-sm font-medium transition">
+                      <MessageSquare size={16} />
+                      <span>Commenta</span>
+                    </button>
+                    {canDelete && (
+                      <IdeaDeleteButton ideaId={idea.id} />
+                    )}
+                  </div>
                 </div>
               </div>
             )
