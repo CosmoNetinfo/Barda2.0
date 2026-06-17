@@ -58,8 +58,8 @@ export default function ConsentPage() {
             L&apos;applicazione web privata &quot;Bardà&quot; raccoglie ed elabora alcuni dati personali (come nome, email, foto profilo e contenuti inseriti) esclusivamente per finalità di coordinamento interno del gruppo &quot;Li Bardasci&quot;. I dati non saranno ceduti a terzi.
           </p>
           <p>
-            <strong>Titolare del trattamento:</strong> Daniele Spalletti (DanyWolf)<br />
-            <strong>Contatto:</strong> admin@cosmonet.info
+            <strong>Titolare del trattamento:</strong> <a href="https://www.cosmonet.info" target="_blank" rel="noopener noreferrer" className="text-[#E8201A] underline font-medium hover:text-[#d11913]">Daniele Spalletti (CosmoNet.info)</a><br />
+            <strong>Contatto:</strong> <a href="mailto:admindany@gmail.com" className="text-[#E8201A] underline font-medium hover:text-[#d11913]">admindany@gmail.com</a>
           </p>
           <p>
             Puoi leggere il testo completo dell&apos;informativa aprendo la <Link href="/privacy" target="_blank" className="text-[#E8201A] underline font-medium">Privacy Policy completa</Link> in una nuova scheda.

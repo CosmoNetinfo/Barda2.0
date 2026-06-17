@@ -32,8 +32,8 @@ export default function PrivacyPage() {
         <div className="space-y-8 leading-relaxed text-gray-600">
           <section className="bg-rose-50/50 rounded-2xl p-5 border border-rose-100/30">
             <p className="font-medium text-gray-700">
-              <strong>Titolare del trattamento:</strong> Daniele Spalletti (DanyWolf)<br />
-              <strong>Email di contatto:</strong> <a href="mailto:admin@cosmonet.info" className="text-[#E8201A] underline font-medium hover:text-[#d11913]">admin@cosmonet.info</a>
+              <strong>Titolare del trattamento:</strong> <a href="https://www.cosmonet.info" target="_blank" rel="noopener noreferrer" className="text-[#E8201A] underline font-medium hover:text-[#d11913]">Daniele Spalletti (CosmoNet.info)</a><br />
+              <strong>Email di contatto:</strong> <a href="mailto:admindany@gmail.com" className="text-[#E8201A] underline font-medium hover:text-[#d11913]">admindany@gmail.com</a>
             </p>
           </section>
 
@@ -162,7 +162,7 @@ export default function PrivacyPage() {
               <li><strong>Revoca del consenso</strong> — ritirare il consenso senza conseguenze</li>
             </ul>
             <p>
-              Per esercitare questi diritti scrivi a: <a href="mailto:admin@cosmonet.info" className="text-[#E8201A] underline font-medium hover:text-[#d11913]">admin@cosmonet.info</a>
+              Per esercitare questi diritti scrivi a: <a href="mailto:admindany@gmail.com" className="text-[#E8201A] underline font-medium hover:text-[#d11913]">admindany@gmail.com</a>
             </p>
           </section>
 
@@ -201,8 +201,8 @@ export default function PrivacyPage() {
               11. Contatti
             </h2>
             <p className="font-medium text-gray-700">
-              <strong>Daniele Spalletti (DanyWolf)</strong><br />
-              Email: <a href="mailto:admin@cosmonet.info" className="text-[#E8201A] underline font-medium hover:text-[#d11913]">admin@cosmonet.info</a><br />
+              <strong>Daniele Spalletti (CosmoNet.info)</strong><br />
+              Email: <a href="mailto:admindany@gmail.com" className="text-[#E8201A] underline font-medium hover:text-[#d11913]">admindany@gmail.com</a><br />
               Sito: <a href="https://www.cosmonet.info" target="_blank" rel="noopener noreferrer" className="text-[#E8201A] underline font-medium hover:text-[#d11913]">https://www.cosmonet.info</a>
             </p>
           </section>
