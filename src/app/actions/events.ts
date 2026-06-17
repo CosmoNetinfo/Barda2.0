@@ -49,34 +49,58 @@ export async function createEvent(formData: FormData) {
 }
 
 export async function rsvpEvent(eventId: string, status: 'yes' | 'no' | 'maybe') {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Non autenticato' }
+  try {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Non autenticato' }
 
-  // Controlla rsvp esistente
-  const { data: existing } = await supabase
-    .from('event_rsvp')
-    .select('status')
-    .eq('event_id', eventId)
-    .eq('user_id', user.id)
-    .single()
-
-  if (existing) {
-    await supabase
+    // Controlla rsvp esistente - usando limit(1) per evitare l'errore single()
+    const { data: existingList, error: checkError } = await supabase
       .from('event_rsvp')
-      .update({ status })
+      .select('status')
       .eq('event_id', eventId)
       .eq('user_id', user.id)
-  } else {
-    await supabase
-      .from('event_rsvp')
-      .insert({
-        event_id: eventId,
-        user_id: user.id,
-        status
-      })
-  }
+      .limit(1)
 
-  revalidatePath('/events')
-  revalidatePath('/') // Aggiorna anche la dashboard
+    if (checkError) {
+      console.error('Error checking rsvp:', checkError)
+      return { error: `Errore durante il controllo: ${checkError.message}` }
+    }
+
+    const existing = existingList && existingList.length > 0 ? existingList[0] : null
+
+    if (existing) {
+      const { error: updateError } = await supabase
+        .from('event_rsvp')
+        .update({ status })
+        .eq('event_id', eventId)
+        .eq('user_id', user.id)
+
+      if (updateError) {
+        console.error('Error updating rsvp:', updateError)
+        return { error: `Errore durante l'aggiornamento: ${updateError.message}` }
+      }
+    } else {
+      const { error: insertError } = await supabase
+        .from('event_rsvp')
+        .insert({
+          event_id: eventId,
+          user_id: user.id,
+          status
+        })
+
+      if (insertError) {
+        console.error('Error inserting rsvp:', insertError)
+        return { error: `Errore durante l'iscrizione: ${insertError.message}` }
+      }
+    }
+
+    revalidatePath('/events')
+    revalidatePath('/') // Aggiorna anche la dashboard
+    return { success: true }
+  } catch (err) {
+    console.error('rsvpEvent crash:', err)
+    const errMsg = err instanceof Error ? err.message : String(err)
+    return { error: `Errore imprevisto: ${errMsg}` }
+  }
 }

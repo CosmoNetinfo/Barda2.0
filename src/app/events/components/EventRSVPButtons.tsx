@@ -3,14 +3,27 @@
 import { rsvpEvent } from '@/app/actions/events'
 import { useTransition } from 'react'
 import { CheckCircle2, XCircle, HelpCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function EventRSVPButtons({ eventId, currentStatus }: { eventId: string, currentStatus: string | null }) {
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
+
+  const handleRsvp = (status: 'yes' | 'no' | 'maybe') => {
+    startTransition(async () => {
+      const res = await rsvpEvent(eventId, status)
+      if (res && res.error) {
+        alert(res.error)
+      } else {
+        router.refresh()
+      }
+    })
+  }
 
   return (
     <div className={`flex flex-wrap gap-2 ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
       <button 
-        onClick={() => startTransition(() => { rsvpEvent(eventId, 'yes') })}
+        onClick={() => handleRsvp('yes')}
         className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all border ${
           currentStatus === 'yes' ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:text-blue-600'
         }`}
@@ -20,7 +33,7 @@ export default function EventRSVPButtons({ eventId, currentStatus }: { eventId: 
       </button>
 
       <button 
-        onClick={() => startTransition(() => { rsvpEvent(eventId, 'maybe') })}
+        onClick={() => handleRsvp('maybe')}
         className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all border ${
           currentStatus === 'maybe' ? 'bg-amber-500 text-white border-amber-500 shadow-md' : 'bg-white text-gray-600 border-gray-200 hover:border-amber-300 hover:text-amber-500'
         }`}
@@ -30,7 +43,7 @@ export default function EventRSVPButtons({ eventId, currentStatus }: { eventId: 
       </button>
 
       <button 
-        onClick={() => startTransition(() => { rsvpEvent(eventId, 'no') })}
+        onClick={() => handleRsvp('no')}
         className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all border ${
           currentStatus === 'no' ? 'bg-gray-200 text-gray-800 border-gray-300 shadow-inner' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50'
         }`}
