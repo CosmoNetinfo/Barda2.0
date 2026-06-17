@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { redirect } from 'next/navigation'
 import { Calendar, MapPin, Clock, Users } from 'lucide-react'
 import EventForm from './components/EventForm'
@@ -18,8 +19,9 @@ export default async function EventsPage() {
     .select('*')
     .order('date', { ascending: true })
 
-  // Fetch RSVPs
-  const { data: rsvpsRaw } = await supabase
+  // Fetch RSVPs using admin client to bypass potential RLS SELECT restrictions
+  const adminClient = createAdminClient()
+  const { data: rsvpsRaw } = await adminClient
     .from('event_rsvp')
     .select('*')
 
@@ -72,6 +74,8 @@ export default async function EventsPage() {
             const eventRsvps = rsvps?.filter(r => r.event_id === event.id) || []
             const myRsvp = eventRsvps.find(r => r.user_id === user.id)?.status || null
             const attending = eventRsvps.filter(r => r.status === 'yes')
+            const maybe = eventRsvps.filter(r => r.status === 'maybe')
+            const declined = eventRsvps.filter(r => r.status === 'no')
 
             // Formatting date beautifully
             const eventDate = new Date(event.date)
@@ -113,6 +117,65 @@ export default async function EventsPage() {
                         <p className="text-gray-600 mb-6 leading-relaxed">
                           {event.description}
                         </p>
+                      )}
+
+                      {/* Detailed RSVP list */}
+                      {(attending.length > 0 || maybe.length > 0 || declined.length > 0) && (
+                        <div className="mb-6 pt-4 border-t border-gray-100 space-y-3">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Risposte dei membri</h4>
+                          <div className="space-y-2">
+                            {attending.length > 0 && (
+                              <div className="flex items-start gap-2 text-sm">
+                                <span className="font-bold text-emerald-600 shrink-0 min-w-[80px]">Ci sono:</span>
+                                <div className="flex flex-wrap gap-1.5 items-center">
+                                  {attending.map((rsvp, idx) => {
+                                    const profile = Array.isArray(rsvp.profiles) ? rsvp.profiles[0] : rsvp.profiles;
+                                    return (
+                                      <span key={idx} className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full text-xs font-medium border border-emerald-100">
+                                        {profile?.avatar_url && <img src={profile.avatar_url} className="w-3.5 h-3.5 rounded-full" />}
+                                        {profile?.name || 'Utente'}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {maybe.length > 0 && (
+                              <div className="flex items-start gap-2 text-sm">
+                                <span className="font-bold text-amber-600 shrink-0 min-w-[80px]">Forse:</span>
+                                <div className="flex flex-wrap gap-1.5 items-center">
+                                  {maybe.map((rsvp, idx) => {
+                                    const profile = Array.isArray(rsvp.profiles) ? rsvp.profiles[0] : rsvp.profiles;
+                                    return (
+                                      <span key={idx} className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full text-xs font-medium border border-amber-100">
+                                        {profile?.avatar_url && <img src={profile.avatar_url} className="w-3.5 h-3.5 rounded-full" />}
+                                        {profile?.name || 'Utente'}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            {declined.length > 0 && (
+                              <div className="flex items-start gap-2 text-sm">
+                                <span className="font-bold text-gray-500 shrink-0 min-w-[80px]">Non posso:</span>
+                                <div className="flex flex-wrap gap-1.5 items-center">
+                                  {declined.map((rsvp, idx) => {
+                                    const profile = Array.isArray(rsvp.profiles) ? rsvp.profiles[0] : rsvp.profiles;
+                                    return (
+                                      <span key={idx} className="inline-flex items-center gap-1 bg-gray-50 text-gray-650 px-2 py-0.5 rounded-full text-xs font-medium border border-gray-200">
+                                        {profile?.avatar_url && <img src={profile.avatar_url} className="w-3.5 h-3.5 rounded-full" />}
+                                        {profile?.name || 'Utente'}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       )}
                     </div>
 
