@@ -18,7 +18,11 @@ export default async function Home() {
   // (In a real app, these would fetch from the actual tables.
   // We'll mock the UI structure here so it looks complete)
   
-  const today = new Date().toISOString()
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const todayDateString = `${year}-${month}-${day}`
 
   const [
     { data: profile },
@@ -27,7 +31,7 @@ export default async function Home() {
     { data: latestIdeasRaw }
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
-    supabase.from('events').select('id, title, date, time, location').gte('date', today).order('date', { ascending: true }).limit(1),
+    supabase.from('events').select('id, title, date, time, location').gte('date', todayDateString).order('date', { ascending: true }).limit(1),
     supabase.from('task_assignees').select('task_id').eq('user_id', user.id),
     supabase.from('ideas').select('id, title, description, created_at, category, author_id').order('created_at', { ascending: false }).limit(3)
   ])
