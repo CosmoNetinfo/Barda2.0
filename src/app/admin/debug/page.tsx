@@ -66,6 +66,47 @@ export default async function DebugPage() {
     isPinnedExists = false
   }
 
+  // 1. Check completed_at on task_assignees
+  let isCompletedAtExists = true
+  try {
+    const { error } = await supabase.from('task_assignees').select('completed_at').limit(1)
+    if (error) isCompletedAtExists = false
+  } catch {
+    isCompletedAtExists = false
+  }
+
+  // 2. Check consent_accepted_at on profiles
+  let isConsentAcceptedAtExists = true
+  try {
+    const { error } = await supabase.from('profiles').select('consent_accepted_at').limit(1)
+    if (error) isConsentAcceptedAtExists = false
+  } catch {
+    isConsentAcceptedAtExists = false
+  }
+
+  // 3. Check comment tables existence
+  let isCommentsTableExists = true
+  try {
+    const { error } = await supabase.from('idea_comments').select('id').limit(1)
+    if (error) isCommentsTableExists = false
+  } catch {
+    isCommentsTableExists = false
+  }
+
+  let isCommentLikesTableExists = true
+  try {
+    const { error } = await supabase.from('idea_comment_likes').select('comment_id').limit(1)
+    if (error) isCommentLikesTableExists = false
+  } catch {
+    isCommentLikesTableExists = false
+  }
+
+  // 4. Measure DB response time
+  const startQuery = performance.now()
+  await supabase.from('profiles').select('id').limit(1)
+  const endQuery = performance.now()
+  const dbResponseTimeMs = Math.round(endQuery - startQuery)
+
   // Get Active Members with auth.users if possible
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let membersData: any[] = []
@@ -146,6 +187,14 @@ export default async function DebugPage() {
               )}
             </div>
             <div className="flex justify-between items-center p-3 bg-[#1a1a2a] rounded-xl border border-gray-800">
+              <span className="text-gray-400">Latenza Database</span>
+              <span className={`font-bold ${
+                dbResponseTimeMs < 250 ? 'text-emerald-400' :
+                dbResponseTimeMs < 600 ? 'text-amber-400' :
+                'text-red-400 animate-pulse'
+              }`}>{dbResponseTimeMs} ms {dbResponseTimeMs >= 600 ? '(Lento)' : ''}</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-[#1a1a2a] rounded-xl border border-gray-800">
               <span className="text-gray-400">Ambiente</span>
               <span className="text-indigo-400 font-bold">{process.env.NODE_ENV}</span>
             </div>
@@ -164,18 +213,71 @@ export default async function DebugPage() {
         {/* AVVISI */}
         <section className="bg-[#242438] p-6 rounded-3xl border border-gray-700 shadow-xl">
           <h2 className="text-2xl font-bold font-barlow text-white mb-6 uppercase flex items-center gap-2">
-            <AlertTriangle className="text-amber-400" /> Avvisi
+            <AlertTriangle className="text-amber-400" /> Avvisi Schema & Diagnostica
           </h2>
           <div className="space-y-3">
-            {!isPinnedExists && (
+            {/* Latenza Lenta */}
+            {dbResponseTimeMs >= 650 && (
+              <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-red-400">
+                <p className="font-bold flex items-center gap-2"><AlertTriangle size={18} /> Rilevata Lentezza Connessione</p>
+                <p className="text-sm mt-1 opacity-80">La query al DB ha impiegato {dbResponseTimeMs}ms. Se persistente, potrebbe essere dovuto ad una connessione instabile o a limitazioni del piano Supabase.</p>
+              </div>
+            )}
+
+            {/* completed_at */}
+            {!isCompletedAtExists ? (
+              <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-red-400">
+                <p className="font-bold flex items-center gap-2"><XCircle size={18} /> Colonna `completed_at` Mancante</p>
+                <p className="text-xs mt-1 opacity-85">La tabella `task_assignees` non ha la colonna `completed_at` per il completamento individuale dei task.</p>
+                <pre className="text-[10px] bg-black/40 p-2 rounded mt-2 text-red-300 overflow-x-auto font-mono">
+                  {`ALTER TABLE public.task_assignees\nADD COLUMN IF NOT EXISTS completed_at timestamptz DEFAULT NULL;`}
+                </pre>
+              </div>
+            ) : (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl text-emerald-400 flex items-center gap-2 text-xs font-bold">
+                <CheckCircle size={14} /> Colonna `task_assignees.completed_at` attiva
+              </div>
+            )}
+
+            {/* consent_accepted_at */}
+            {!isConsentAcceptedAtExists ? (
+              <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-red-400">
+                <p className="font-bold flex items-center gap-2"><XCircle size={18} /> Colonna `consent_accepted_at` Mancante</p>
+                <p className="text-xs mt-1 opacity-85">La tabella `profiles` non ha la colonna `consent_accepted_at` per il consenso privacy.</p>
+                <pre className="text-[10px] bg-black/40 p-2 rounded mt-2 text-red-300 overflow-x-auto font-mono">
+                  {`ALTER TABLE public.profiles\nADD COLUMN IF NOT EXISTS consent_accepted_at timestamptz DEFAULT NULL;`}
+                </pre>
+              </div>
+            ) : (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl text-emerald-400 flex items-center gap-2 text-xs font-bold">
+                <CheckCircle size={14} /> Colonna `profiles.consent_accepted_at` attiva
+              </div>
+            )}
+
+            {/* Commenti Idee */}
+            {!isCommentsTableExists || !isCommentLikesTableExists ? (
+              <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-red-400">
+                <p className="font-bold flex items-center gap-2"><XCircle size={18} /> Tabelle Commenti/Likes Mancanti</p>
+                <p className="text-xs mt-1 opacity-85">Mancano le tabelle per i commenti ed i likes dei commenti per le Idee.</p>
+                <pre className="text-[10px] bg-black/40 p-2 rounded mt-2 text-red-300 overflow-x-auto font-mono max-h-24 overflow-y-auto">
+                  {`CREATE TABLE public.idea_comments (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  idea_id UUID REFERENCES public.ideas(id) ON DELETE CASCADE,\n  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,\n  body TEXT NOT NULL,\n  created_at TIMESTAMPTZ DEFAULT now()\n);\n\nCREATE TABLE public.idea_comment_likes (\n  comment_id UUID REFERENCES public.idea_comments(id) ON DELETE CASCADE,\n  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,\n  PRIMARY KEY (comment_id, user_id)\n);`}
+                </pre>
+              </div>
+            ) : (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl text-emerald-400 flex items-center gap-2 text-xs font-bold">
+                <CheckCircle size={14} /> Tabelle `idea_comments` & `likes` attive
+              </div>
+            )}
+
+            {/* Pinned Events */}
+            {!isPinnedExists ? (
               <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-red-400">
                 <p className="font-bold flex items-center gap-2"><XCircle size={18} /> Colonna `is_pinned` mancante</p>
                 <p className="text-sm mt-1 opacity-80">La tabella `events` non ha la colonna `is_pinned`.</p>
               </div>
-            )}
-            {isPinnedExists && (
-              <div className="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-xl text-emerald-400 flex items-center gap-2 font-bold">
-                <CheckCircle size={18} /> Colonna `events.is_pinned` verificata
+            ) : (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl text-emerald-400 flex items-center gap-2 text-xs font-bold">
+                <CheckCircle size={14} /> Colonna `events.is_pinned` attiva
               </div>
             )}
 
