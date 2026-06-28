@@ -145,3 +145,102 @@ export async function deleteIdea(ideaId: string) {
   }
 }
 
+export async function addComment(ideaId: string, body: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Non autenticato' }
+
+  if (!body || body.trim() === '') {
+    return { error: 'Il testo del commento non può essere vuoto' }
+  }
+
+  const { error } = await supabase.from('idea_comments').insert({
+    idea_id: ideaId,
+    user_id: user.id,
+    body: body.trim()
+  })
+
+  if (error) {
+    return { error: `Errore durante il salvataggio del commento: ${error.message}` }
+  }
+
+  revalidatePath('/ideas')
+  return { success: true }
+}
+
+export async function deleteComment(commentId: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Non autenticato' }
+
+  // Ottieni il commento per verificare l'autore o se l'utente è un admin
+  const { data: comment } = await supabase
+    .from('idea_comments')
+    .select('user_id')
+    .eq('id', commentId)
+    .single()
+
+  if (!comment) {
+    return { error: 'Commento non trovato' }
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const isAuthor = comment.user_id === user.id
+  const isAdmin = profile?.role?.toLowerCase() === 'admin'
+
+  if (!isAuthor && !isAdmin) {
+    return { error: 'Non hai i permessi per eliminare questo commento' }
+  }
+
+  const { error } = await supabase
+    .from('idea_comments')
+    .delete()
+    .eq('id', commentId)
+
+  if (error) {
+    return { error: `Errore durante l'eliminazione del commento: ${error.message}` }
+  }
+
+  revalidatePath('/ideas')
+  return { success: true }
+}
+
+export async function toggleCommentLike(commentId: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Non autenticato' }
+
+  // Verifica se esiste già il like
+  const { data: existingLike } = await supabase
+    .from('idea_comment_likes')
+    .select('*')
+    .eq('comment_id', commentId)
+    .eq('user_id', user.id)
+    .single()
+
+  if (existingLike) {
+    // Rimuovi il like
+    await supabase
+      .from('idea_comment_likes')
+      .delete()
+      .eq('comment_id', commentId)
+      .eq('user_id', user.id)
+  } else {
+    // Aggiungi il like
+    await supabase
+      .from('idea_comment_likes')
+      .insert({
+        comment_id: commentId,
+        user_id: user.id
+      })
+  }
+
+  revalidatePath('/ideas')
+  return { success: true }
+}
+

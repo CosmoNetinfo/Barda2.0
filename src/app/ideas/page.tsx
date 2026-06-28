@@ -1,10 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { Lightbulb, MessageSquare } from 'lucide-react'
+import { Lightbulb } from 'lucide-react'
 import IdeaForm from './components/IdeaForm'
-import IdeaVoteButtons from './components/IdeaVoteButtons'
-import IdeaDeleteButton from './components/IdeaDeleteButton'
-
+import IdeaCard from './components/IdeaCard'
 
 export default async function IdeasPage() {
   const supabase = createClient()
@@ -14,16 +13,22 @@ export default async function IdeasPage() {
     redirect('/login')
   }
 
-  // Fetch ideas
-  const { data: ideasRaw } = await supabase
-    .from('ideas')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  // Fetch profiles
-  const { data: profiles } = await supabase
-    .from('profiles')
-    .select('id, name, avatar_url')
+  // Fetch ideas, profiles, votes, comments, and comment likes
+  const [
+    { data: ideasRaw },
+    { data: profiles },
+    { data: myVotes },
+    { data: allVotes },
+    { data: commentsRaw },
+    { data: commentLikesRaw }
+  ] = await Promise.all([
+    supabase.from('ideas').select('*').order('created_at', { ascending: false }),
+    supabase.from('profiles').select('id, name, avatar_url'),
+    supabase.from('idea_votes').select('idea_id, vote').eq('user_id', user.id),
+    supabase.from('idea_votes').select('idea_id, vote'),
+    supabase.from('idea_comments').select('*').order('created_at', { ascending: true }),
+    supabase.from('idea_comment_likes').select('*')
+  ])
 
   const profileMap = new Map(profiles?.map(p => [p.id, p]) || [])
 
@@ -32,12 +37,6 @@ export default async function IdeasPage() {
     ...idea,
     profiles: profileMap.get(idea.author_id) || null
   })) || []
-
-  // Fetch votes for this user
-  const { data: myVotes } = await supabase
-    .from('idea_votes')
-    .select('idea_id, vote')
-    .eq('user_id', user.id)
 
   const myVoteMap = new Map(myVotes?.map(v => [v.idea_id, v.vote]))
 
@@ -48,12 +47,7 @@ export default async function IdeasPage() {
     .eq('id', user.id)
     .single()
 
-
-  // In a real app we'd do an aggregate query, but we can aggregate votes here for demo
-  const { data: allVotes } = await supabase
-    .from('idea_votes')
-    .select('idea_id, vote')
-
+  // Aggregate votes
   const voteCounts = new Map<string, { up: number, down: number }>()
   ideas?.forEach(idea => voteCounts.set(idea.id, { up: 0, down: 0 }))
   allVotes?.forEach(v => {
@@ -62,6 +56,32 @@ export default async function IdeasPage() {
       if (v.vote === 'up') counts.up++
       else if (v.vote === 'down') counts.down++
     }
+  })
+
+  // Group and format comments by idea_id
+  const commentsByIdea = new Map<string, any[]>()
+  ideas?.forEach(idea => commentsByIdea.set(idea.id, []))
+
+  commentsRaw?.forEach(c => {
+    const author = profileMap.get(c.user_id)
+    const likes = commentLikesRaw?.filter(l => l.comment_id === c.id) || []
+    const likesCount = likes.length
+    const hasLiked = likes.some(l => l.user_id === user.id)
+
+    const formattedComment = {
+      id: c.id,
+      body: c.body,
+      created_at: c.created_at,
+      user_id: c.user_id,
+      authorName: author?.name || 'Utente sconosciuto',
+      authorAvatar: author?.avatar_url || null,
+      likesCount,
+      hasLiked
+    }
+
+    const currentComments = commentsByIdea.get(c.idea_id) || []
+    currentComments.push(formattedComment)
+    commentsByIdea.set(c.idea_id, currentComments)
   })
 
   return (
@@ -87,69 +107,22 @@ export default async function IdeasPage() {
           ideas?.map(idea => {
             const counts = voteCounts.get(idea.id) || { up: 0, down: 0 }
             const myVote = myVoteMap.get(idea.id) || null
-            const author = Array.isArray(idea.profiles) ? idea.profiles[0] : idea.profiles;
             const isAuthor = idea.author_id === user.id
             const isAdmin = myProfile?.role?.toLowerCase() === 'admin'
             const canDelete = isAuthor || isAdmin
+            const comments = commentsByIdea.get(idea.id) || []
 
             return (
-              <div key={idea.id} className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col sm:flex-row gap-4 hover:shadow-md transition">
-
-                <div className="flex-1 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md">
-                      {idea.category}
-                    </span>
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-md ${
-                      idea.status === 'proposta' ? 'bg-blue-50 text-blue-600' :
-                      idea.status === 'approvata' ? 'bg-green-50 text-green-600' :
-                      idea.status === 'scartata' ? 'bg-red-50 text-red-600' :
-                      'bg-purple-50 text-purple-600'
-                    }`}>
-                      {idea.status}
-                    </span>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">{idea.title}</h3>
-                    {idea.description && (
-                      <p className="text-gray-600 mt-1">{idea.description}</p>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    {author?.avatar_url ? (
-                      <img src={author.avatar_url} className="w-6 h-6 rounded-full" alt="Author" />
-                    ) : (
-                      <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center font-bold text-xs">
-                        {author?.name?.[0] || '?'}
-                      </div>
-                    )}
-                    <span className="font-medium text-gray-700">{author?.name || 'Utente sconosciuto'}</span>
-                    <span>•</span>
-                    <span>{new Date(idea.created_at).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}</span>
-                  </div>
-                </div>
-
-                <div className="flex sm:flex-col items-center justify-between sm:justify-start gap-4 border-t sm:border-t-0 sm:border-l border-gray-100 pt-4 sm:pt-0 sm:pl-4">
-                  <IdeaVoteButtons 
-                    ideaId={idea.id} 
-                    currentVote={myVote} 
-                    upVotes={counts.up} 
-                    downVotes={counts.down} 
-                  />
-                  
-                  <div className="flex items-center gap-3 w-full justify-around sm:justify-start">
-                    <button className="flex items-center gap-1.5 text-gray-500 hover:text-gray-900 text-sm font-medium transition">
-                      <MessageSquare size={16} />
-                      <span>Commenta</span>
-                    </button>
-                    {canDelete && (
-                      <IdeaDeleteButton ideaId={idea.id} />
-                    )}
-                  </div>
-                </div>
-              </div>
+              <IdeaCard
+                key={idea.id}
+                idea={idea}
+                myVote={myVote}
+                counts={counts}
+                canDelete={canDelete}
+                userId={user.id}
+                isAdmin={isAdmin}
+                comments={comments}
+              />
             )
           })
         )}

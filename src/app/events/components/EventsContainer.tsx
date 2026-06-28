@@ -15,6 +15,18 @@ interface EventsContainerProps {
 export default function EventsContainer({ events, rsvps, userId }: EventsContainerProps) {
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list')
 
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const todayStr = `${year}-${month}-${day}`
+
+  // Filtriamo gli eventi per la vista elenco (solo eventi da oggi in poi)
+  const upcomingEvents = events.filter(event => {
+    const eventDateStr = event.date.split('T')[0]
+    return eventDateStr >= todayStr
+  })
+
   return (
     <div className="space-y-6">
       {/* Switcher di Vista */}
@@ -49,7 +61,7 @@ export default function EventsContainer({ events, rsvps, userId }: EventsContain
         <EventCalendarView events={events} rsvps={rsvps} userId={userId} />
       ) : (
         /* Vista Elenco Esistente */
-        events.length === 0 ? (
+        upcomingEvents.length === 0 ? (
           <div className="text-center py-20 text-gray-500 bg-white/50 backdrop-blur-sm rounded-3xl border border-dashed border-gray-300">
             <CalendarIcon size={48} className="mx-auto text-gray-300 mb-4" />
             <h3 className="text-lg font-bold text-gray-700">Nessun evento in programma</h3>
@@ -57,7 +69,7 @@ export default function EventsContainer({ events, rsvps, userId }: EventsContain
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6">
-            {events.map(event => {
+            {upcomingEvents.map(event => {
               const eventRsvps = rsvps.filter(r => r.event_id === event.id) || []
               const myRsvp = eventRsvps.find(r => r.user_id === userId)?.status || null
               const attending = eventRsvps.filter(r => r.status === 'yes')
