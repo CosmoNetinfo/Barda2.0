@@ -146,14 +146,82 @@ export async function updateTaskStatus(taskId: string, status: string) {
     if (!user) return { error: 'Non autenticato' }
 
     const adminClient = createAdminClient()
-    const { error } = await adminClient
-      .from('tasks')
-      .update({ status })
-      .eq('id', taskId)
+    
+    // Controlliamo se l'utente loggato è tra gli assegnatari di questo task
+    const { data: assignee } = await adminClient
+      .from('task_assignees')
+      .select('*')
+      .eq('task_id', taskId)
+      .eq('user_id', user.id)
+      .single()
 
-    if (error) {
-      console.error('Error updating task status:', error)
-      return { error: 'Errore aggiornamento stato' }
+    if (assignee) {
+      // Se l'utente loggato è assegnatario, aggiorniamo il suo completamento individuale
+      const newCompletedAt = status === 'done' ? new Date().toISOString() : null
+      
+      const { error: assignError } = await adminClient
+        .from('task_assignees')
+        .update({ completed_at: newCompletedAt })
+        .eq('task_id', taskId)
+        .eq('user_id', user.id)
+
+      if (assignError) {
+        console.error('Error updating assignee completion:', assignError)
+        return { error: 'Errore durante l\'aggiornamento dell\'assegnatario' }
+      }
+
+      // Verifica se TUTTI gli assegnatari hanno completato il task
+      const { data: allAssignees } = await adminClient
+        .from('task_assignees')
+        .select('completed_at')
+        .eq('task_id', taskId)
+
+      const allCompleted = allAssignees && allAssignees.length > 0 && allAssignees.every(a => !!a.completed_at)
+      
+      // Lo status globale del task diventa 'done' solo se tutti lo hanno completato,
+      // altrimenti impostiamo lo status globale a 'todo' o 'in_progress'
+      let globalStatus = 'todo'
+      if (allCompleted) {
+        globalStatus = 'done'
+      } else if (status === 'in_progress') {
+        globalStatus = 'in_progress'
+      }
+
+      const { error: taskError } = await adminClient
+        .from('tasks')
+        .update({ status: globalStatus })
+        .eq('id', taskId)
+
+      if (taskError) {
+        console.error('Error updating task global status:', taskError)
+      }
+
+    } else {
+      // Se l'utente loggato non è assegnatario (es. autore non assegnatario o admin),
+      // aggiorniamo direttamente lo status globale del task
+      const { error } = await adminClient
+        .from('tasks')
+        .update({ status })
+        .eq('id', taskId)
+
+      if (error) {
+        console.error('Error updating task status:', error)
+        return { error: 'Errore aggiornamento stato' }
+      }
+
+      // Se impostiamo a 'done', impostiamo completed_at a now() per tutti gli assegnatari.
+      // Se impostiamo a 'todo' o 'in_progress', impostiamo completed_at a null per tutti.
+      if (status === 'done') {
+        await adminClient
+          .from('task_assignees')
+          .update({ completed_at: new Date().toISOString() })
+          .eq('task_id', taskId)
+      } else {
+        await adminClient
+          .from('task_assignees')
+          .update({ completed_at: null })
+          .eq('task_id', taskId)
+      }
     }
     
     revalidatePath('/tasks')

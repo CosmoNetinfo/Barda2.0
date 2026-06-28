@@ -33,15 +33,30 @@ export default async function TasksPage() {
 
   // Map assignees to tasks to retain compatibility with TaskItem.tsx
   const tasks = tasksRaw?.map(task => {
-    const taskAssignees = assigneesRaw
-      ?.filter(a => a.task_id === task.id)
+    const taskAssigneesRaw = assigneesRaw?.filter(a => a.task_id === task.id) || []
+    
+    // Controlliamo se l'utente loggato ha completato questo task personalmente
+    const myAssignment = taskAssigneesRaw.find(a => a.user_id === user.id)
+    const isCompletedByMe = myAssignment ? !!myAssignment.completed_at : false
+    
+    // Lo status effettivo per l'utente loggato:
+    // Se lo ha completato lui, per lui è 'done' (indipendentemente dallo status globale del task).
+    // Se non lo ha completato ma lo status globale del task è 'done', lo mostriamo come 'todo' (aperto) 
+    // perché lui personalmente non lo ha ancora marcato come completato!
+    const effectiveStatus = myAssignment
+      ? (isCompletedByMe ? 'done' : (task.status === 'done' ? 'todo' : task.status))
+      : task.status
+
+    const taskAssignees = taskAssigneesRaw
       .map(a => ({
-        profiles: profileMap.get(a.user_id) || null
+        profiles: profileMap.get(a.user_id) || null,
+        completed_at: a.completed_at
       }))
       .filter(a => a.profiles !== null) || []
 
     return {
       ...task,
+      status: effectiveStatus,
       task_assignees: taskAssignees
     }
   }) || []

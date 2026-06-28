@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
@@ -32,7 +33,7 @@ export default async function Home() {
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
     supabase.from('events').select('id, title, date, time, location').gte('date', todayDateString).order('date', { ascending: true }).limit(1),
-    supabase.from('task_assignees').select('task_id').eq('user_id', user.id),
+    supabase.from('task_assignees').select('task_id, completed_at').eq('user_id', user.id),
     supabase.from('ideas').select('id, title, description, created_at, category, author_id').order('created_at', { ascending: false }).limit(3)
   ])
 
@@ -40,9 +41,11 @@ export default async function Home() {
   const firstName = fullName.split(' ')[0]
   const nextEvent = nextEvents?.[0]
   
-  // Fetch tasks corresponding to the user's assignees locally to avoid relational join errors
+  // Fetch tasks corresponding to the user's assignees that are not completed personally
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const taskIds = myTasksRaw?.map((a: any) => a.task_id) || []
+  const taskIds = myTasksRaw
+    ?.filter((a: any) => !a.completed_at)
+    .map((a: any) => a.task_id) || []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let myTasks: any[] = []
   if (taskIds.length > 0) {
@@ -50,7 +53,6 @@ export default async function Home() {
       .from('tasks')
       .select('id, title, status')
       .in('id', taskIds)
-      .neq('status', 'done')
     myTasks = fetchedTasks || []
   }
 
